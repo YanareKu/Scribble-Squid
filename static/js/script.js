@@ -104,6 +104,7 @@ $(document).ready(function () {
 
     function eraser(lastX, lastY){
 	    ctx.globalCompositeOperation="destination-out";
+	    ctx.beginPath();
 		ctx.arc(lastX, lastY, 8, 0, Math.PI*2, false);
 	    ctx.fill();
 	}
