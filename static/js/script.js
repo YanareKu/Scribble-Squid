@@ -1,6 +1,8 @@
 $(document).ready(function () {
 
-	// Setting up all the globals
+	/*-----------------------------------------------------------
+	      				   Set Globals
+	-------------------------------------------------------------*/
     var canvas = document.getElementById('paper'),
     ctx = canvas.getContext('2d') ? canvas.getContext('2d') : null,
     url = 'http://localhost:5000',
@@ -18,6 +20,9 @@ $(document).ready(function () {
       return;
     }
 
+	/*-----------------------------------------------------------
+	      				Socket Events
+	-------------------------------------------------------------*/
 	socket.on('moving', function (data) {	
 		if(! (data.id in users)){
 			cursors[data.id] = $('<p>').appendTo('#cursors');
@@ -41,6 +46,20 @@ $(document).ready(function () {
 		users[data.id].updated = $.now();
 	});
 
+	socket.on('erase_on', function (data) {	
+		if(data.id != id) {
+			draw = false;
+		}
+	});
+
+	socket.on('erase_off', function (data) {	
+		if(data.id != id) {
+			draw = true;
+		}
+	});
+	/*----------------------------------------------
+	      			Mouse Events
+	------------------------------------------------*/
 	$(canvas).mousedown(function(e){
 		paint = true;
 		last_coord.x = e.pageX - this.offsetLeft;
@@ -62,7 +81,6 @@ $(document).ready(function () {
 				'x': e.pageX - this.offsetLeft,
 				'y': e.pageY - this.offsetTop,
 				'paint': paint,
-				'draw': draw,
 				'id': id
 			}); 
 			lastEmit = $.now();
@@ -79,12 +97,21 @@ $(document).ready(function () {
 		}
 	});
 
+	/*----------------------------------------------
+	      			Click Events
+	------------------------------------------------*/	
 	$("#draw").click(function(){ 
 		draw = true; 
+		socket.emit('draw',{
+			'draw': draw
+		}); 
 	});
 
 	$("#eraser").click(function(){ 
-		draw = false; 
+		draw = false;
+		socket.emit('erase',{
+			'draw': draw
+		}); 
 	});
 
 	setInterval(function(){

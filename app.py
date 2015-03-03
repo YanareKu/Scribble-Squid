@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from flask.ext.socketio import SocketIO, emit
+from flask.ext.socketio import SocketIO, emit, send
 
 app = Flask(__name__)
 app.debug = True
@@ -17,7 +17,14 @@ def listen_send_all(data):
 @socketio.on('mousemove')
 def brdcast_moving(data):
     emit('moving', data, broadcast=True)
-    print data
+
+@socketio.on('erase')
+def eraser_time(data):
+    emit('erase_on', data, broadcast=True)
+
+@socketio.on('draw')
+def paint_time(data):
+    emit('erase_off', data, broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app, host='127.0.0.1', port=5000)
