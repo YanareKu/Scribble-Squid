@@ -29,14 +29,14 @@ $(document).ready(function () {
 				'top' : data.y - this.offsetTop});
 		}
 
-		if(data.paint && users[data.id] && data.id != id){
+		if(data.paint && users[data.id] && data.id != id && mode == "draw"){
 				makeStroke(users[data.id].x, users[data.id].y, data.x, data.y);
 		}
 
-		if(data.paint && users[data.id] && data.id != id && mode != "draw"){
+		if(data.paint && users[data.id] && data.id != id && mode == "eraser"){
 				eraser(users[data.id].x, users[data.id].y);
 		}
-		
+
 		users[data.id] = data; 
 		users[data.id].updated = $.now();
 	});
@@ -71,7 +71,7 @@ $(document).ready(function () {
 		if(paint){
 			if(mode=="draw"){
 				makeStroke(last_coord.x, last_coord.y, e.pageX - this.offsetLeft, e.pageY - this.offsetTop); 
-			} else {
+			} else if(mode=="eraser") {
 				eraser(last_coord.x, last_coord.y);
 			}
 			last_coord.x = e.pageX - this.offsetLeft;
