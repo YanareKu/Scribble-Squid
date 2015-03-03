@@ -7,7 +7,7 @@ $(document).ready(function () {
     socket = io.connect(url),
     id = Math.round($.now()*Math.random()),
     paint = false,
-    mode = "draw",
+    draw = true,
     users = {},
     cursors = {},
     last_coord = {},
@@ -29,11 +29,11 @@ $(document).ready(function () {
 				'top' : data.y - this.offsetTop});
 		}
 
-		if(data.paint && users[data.id] && data.id != id && mode == "draw"){
+		if(data.paint && users[data.id] && data.id != id && draw === true){
 				makeStroke(users[data.id].x, users[data.id].y, data.x, data.y);
 		}
 
-		if(data.paint && users[data.id] && data.id != id && mode == "eraser"){
+		if(data.paint && users[data.id] && data.id != id && draw === false){
 				eraser(users[data.id].x, users[data.id].y);
 		}
 
@@ -62,16 +62,16 @@ $(document).ready(function () {
 				'x': e.pageX - this.offsetLeft,
 				'y': e.pageY - this.offsetTop,
 				'paint': paint,
-				'mode': mode,
-				'id': id,
+				'draw': draw,
+				'id': id
 			}); 
 			lastEmit = $.now();
 		}
 		
 		if(paint){
-			if(mode=="draw"){
+			if(draw){
 				makeStroke(last_coord.x, last_coord.y, e.pageX - this.offsetLeft, e.pageY - this.offsetTop); 
-			} else if(mode=="eraser") {
+			} else if(draw === false) {
 				eraser(last_coord.x, last_coord.y);
 			}
 			last_coord.x = e.pageX - this.offsetLeft;
@@ -80,11 +80,11 @@ $(document).ready(function () {
 	});
 
 	$("#draw").click(function(){ 
-		mode="draw"; 
+		draw = true; 
 	});
 
 	$("#eraser").click(function(){ 
-		mode="eraser"; 
+		draw = false; 
 	});
 
 	setInterval(function(){
@@ -110,6 +110,8 @@ $(document).ready(function () {
 	}
 
 	function makeStroke(lastX, lastY, newX, newY){
+		ctx.globalCompositeOperation = "source-over";
+		ctx.beginPath();
 		ctx.moveTo(lastX, lastY);
 		ctx.lineTo(newX, newY);
 		ctx.stroke(); 
