@@ -24,26 +24,36 @@ $(document).ready(function () {
                     Socket Event // Remote Users
     -------------------------------------------------------------*/
     socket.on('moving', function (data) {   
-        if(!(data.id in users)){
-            cursors[data.id] = $('<p>').appendTo('#cursors');
+        if(!(data.remote_id in users)){
+            cursors[data.remote_id] = $('<p>').appendTo('#cursors');
         }
         
-        if (data.id != id) {
-            cursors[data.id].css({
-                'left' : data.x - this.offsetLeft,
-                'top' : data.y - this.offsetTop});
+        if (data.remote_id != id) {
+            cursors[data.remote_id].css({
+                'left' : data.remote_x - this.offsetLeft,
+                'top' : data.remote_y - this.offsetTop});
         }
 
-        if(data.paint && users[data.id] && data.id != id && data.draw === true){
-                makeStroke(users[data.id].x, users[data.id].y, data.x, data.y);
+        if(data.remote_paint 
+            && users[data.remote_id] 
+            && data.remote_id != id 
+            && data.remote_draw === true){
+                makeStroke(users[data.remote_id].remote_x, 
+                    users[data.remote_id].remote_y, 
+                    data.remote_x, 
+                    data.remote_y);
         }
 
-        if(data.paint && users[data.id] && data.id != id && data.draw === false){
-                eraser(users[data.id].x, users[data.id].y);
+        if(data.remote_paint 
+            && users[data.remote_id] 
+            && data.remote_id != id 
+            && data.remote_draw === false){
+                eraser(users[data.remote_id].remote_x, 
+                    users[data.remote_id].remote_y);
         }
 
-        users[data.id] = data; 
-        users[data.id].updated = $.now();
+        users[data.remote_id] = data; 
+        users[data.remote_id].updated = $.now();
     });
 
     /*----------------------------------------------
@@ -66,11 +76,11 @@ $(document).ready(function () {
     $(canvas).mousemove(function(e){
         if($.now() - lastEmit > 30){
             socket.emit('mousemove',{
-                'x': e.pageX - this.offsetLeft,
-                'y': e.pageY - this.offsetTop,
-                'paint': paint,
-                'draw': draw,
-                'id': id
+                'remote_x': e.pageX - this.offsetLeft,
+                'remote_y': e.pageY - this.offsetTop,
+                'remote_paint': paint,
+                'remote_draw': draw,
+                'remote_id': id
             }); 
             lastEmit = $.now();
         }
@@ -118,10 +128,10 @@ $(document).ready(function () {
     ctx.lineCap = 'round';
     ctx.strokeStyle = '#1873b5';
 
-    function eraser(lastX, lastY){
+    function eraser(mouseX, mouseY){
         ctx.globalCompositeOperation="destination-out";
         ctx.beginPath();
-        ctx.arc(lastX, lastY, 8, 0, Math.PI*2, false);
+        ctx.arc(mouseX, mouseY, 8, 0, Math.PI*2, false);
         ctx.fill();
     }
 
