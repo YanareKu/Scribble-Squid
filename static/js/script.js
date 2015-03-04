@@ -60,12 +60,12 @@ $(document).ready(function () {
             data.remote_id != id &&
             data.remote_draw === false){
                 eraser(
+                    users[data.remote_id].remote_x, 
+                    users[data.remote_id].remote_y,
                     data.remote_x, 
                     data.remote_y);
         }
-
         users[data.remote_id] = data; 
-        users[data.remote_id].updated = $.now();
     });
 
     socket.on('deleteRemoteUser', function (data) {
@@ -109,7 +109,7 @@ $(document).ready(function () {
             if(draw){
                 makeStroke(lastX, lastY, currentX, currentY); 
             } else if(draw === false) {
-                eraser(currentX, currentY);
+                eraser(lastX, lastY, currentX, currentY); 
             }
             lastX = currentX;
             lastY = currentY; 
@@ -140,11 +140,13 @@ $(document).ready(function () {
     ------------------------------------------------*/  
 
 
-    function eraser(newX, newY){
+    function eraser(lastX, lastY, newX, newY){
         ctx.globalCompositeOperation="destination-out";
+        ctx.strokeStyle = 'rgba(0,0,0,1)';
         ctx.beginPath();
-        ctx.arc(newX, newY, 8, 0, Math.PI*2, false);
-        ctx.fill();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(newX, newY);
+        ctx.stroke(); 
     }
 
     function makeStroke(lastX, lastY, newX, newY){
