@@ -34,22 +34,24 @@ $(document).ready(function () {
                 'top' : data.remote_y - this.offsetTop});
         }
 
-        if(data.remote_paint 
-            && users[data.remote_id] 
-            && data.remote_id != id 
-            && data.remote_draw === true){
-                makeStroke(users[data.remote_id].remote_x, 
+        if(data.remote_paint && 
+            users[data.remote_id] && 
+            data.remote_id != id && 
+            data.remote_draw === true){
+                makeStroke(
+                    users[data.remote_id].remote_x, 
                     users[data.remote_id].remote_y, 
                     data.remote_x, 
                     data.remote_y);
         }
 
-        if(data.remote_paint 
-            && users[data.remote_id] 
-            && data.remote_id != id 
-            && data.remote_draw === false){
-                eraser(users[data.remote_id].remote_x, 
-                    users[data.remote_id].remote_y);
+        if(data.remote_paint &&
+            users[data.remote_id] &&
+            data.remote_id != id &&
+            data.remote_draw === false){
+                eraser(
+                    data.remote_x, 
+                    data.remote_y);
         }
 
         users[data.remote_id] = data; 
