@@ -1,8 +1,9 @@
 $(document).ready(function () {
 
     /*-----------------------------------------------------------
-                           Set Globals
+                   Set Globals, Canvas, and Stroke
     -------------------------------------------------------------*/
+    
     var canvas = document.getElementById('paper'),
     ctx = canvas.getContext('2d') ? canvas.getContext('2d') : null,
     url = 'http://localhost:5000',
@@ -15,15 +16,21 @@ $(document).ready(function () {
     last_coord = {},
     lastEmit = $.now(); 
 
+    ctx.lineWidth = 5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#1873b5';
+
     if (ctx === null) {
       alert("You must use a browser that supports HTML5 Canvas to run this demo.");
       return;
     }
 
     /*-----------------------------------------------------------
-                    Socket Event // Remote Users
+                    Socket Events // Remote Users
     -------------------------------------------------------------*/
-    socket.on('moving', function (data) {   
+    socket.on('moving', function (data) {
+       
         if(!(data.remote_id in users)){
             cursors[data.remote_id] = $('<p>').appendTo('#cursors');
         }
@@ -56,6 +63,12 @@ $(document).ready(function () {
 
         users[data.remote_id] = data; 
         users[data.remote_id].updated = $.now();
+    });
+
+    socket.on('deleteRemoteUser', function (data) {
+        cursors[data.remote_id].remove();
+        delete users[data.remote_id];
+        delete cursors[data.remote_id];
     });
 
     /*----------------------------------------------
@@ -98,37 +111,29 @@ $(document).ready(function () {
         }
     });
 
-    /*----------------------------------------------
-                    Click Events
-    ------------------------------------------------*/  
     $("#draw").click(function(){ 
         draw = true; 
-        // socket.emit('draw',{
-        //     'draw': draw
-        // }); 
     });
 
     $("#eraser").click(function(){ 
         draw = false;
-        // socket.emit('erase',{
-        //     'draw': draw
-        // }); 
     });
 
-    setInterval(function(){
-        for(var ident in users){
-            if($.now() - users[ident].updated > 10000){
-                cursors[ident].remove();
-                delete users[ident];
-                delete cursors[ident];
-            }
-        }   
-    },10000);
+    /*----------------------------------------------
+             Remove User if They Close Or 
+              Navigate Away from Window
+    ------------------------------------------------*/  
 
-    ctx.lineWidth = 5;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = '#1873b5';
+    window.onunload = function(e) {
+        socket.emit('deleteUnloaded', {
+            'remote_id': id
+        });
+    };
+
+    /*----------------------------------------------
+                Tool Functions
+    ------------------------------------------------*/  
+
 
     function eraser(mouseX, mouseY){
         ctx.globalCompositeOperation="destination-out";
