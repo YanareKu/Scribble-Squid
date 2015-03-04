@@ -3,7 +3,7 @@ $(document).ready(function () {
     /*-----------------------------------------------------------
                    Set Globals, Canvas, and Stroke
     -------------------------------------------------------------*/
-    
+
     var canvas = document.getElementById('paper'),
     ctx = canvas.getContext('2d') ? canvas.getContext('2d') : null,
     url = 'http://localhost:5000',
@@ -13,8 +13,11 @@ $(document).ready(function () {
     draw = true,
     users = {},
     cursors = {},
-    last_coord = {},
-    lastEmit = $.now(); 
+    lastEmit = $.now(),
+    lastX,
+    lastY,
+    currentX,
+    currentY;
 
     ctx.lineWidth = 5;
     ctx.lineJoin = 'round';
@@ -75,9 +78,9 @@ $(document).ready(function () {
                     Mouse Events
     ------------------------------------------------*/
     $(canvas).mousedown(function(e){
+        lastX = e.pageX - this.offsetLeft;
+        lastY  = e.pageY - this.offsetTop;
         paint = true;
-        last_coord.x = e.pageX - this.offsetLeft;
-        last_coord.y = e.pageY - this.offsetTop;
     });
 
     $(canvas).mouseup(function(e){
@@ -89,7 +92,9 @@ $(document).ready(function () {
     });
 
     $(canvas).mousemove(function(e){
-        if($.now() - lastEmit > 30){
+        currentX = e.pageX - this.offsetLeft;
+        currentY = e.pageY - this.offsetTop;
+        if($.now() - lastEmit > 10){
             socket.emit('mousemove',{
                 'remote_x': e.pageX - this.offsetLeft,
                 'remote_y': e.pageY - this.offsetTop,
@@ -102,12 +107,12 @@ $(document).ready(function () {
         
         if(paint){
             if(draw){
-                makeStroke(last_coord.x, last_coord.y, e.pageX - this.offsetLeft, e.pageY - this.offsetTop); 
+                makeStroke(lastX, lastY, currentX, currentY); 
             } else if(draw === false) {
-                eraser(last_coord.x, last_coord.y);
+                eraser(currentX, currentY);
             }
-            last_coord.x = e.pageX - this.offsetLeft;
-            last_coord.y = e.pageY - this.offsetTop; 
+            lastX = currentX;
+            lastY = currentY; 
         }
     });
 
@@ -135,10 +140,10 @@ $(document).ready(function () {
     ------------------------------------------------*/  
 
 
-    function eraser(mouseX, mouseY){
+    function eraser(newX, newY){
         ctx.globalCompositeOperation="destination-out";
         ctx.beginPath();
-        ctx.arc(mouseX, mouseY, 8, 0, Math.PI*2, false);
+        ctx.arc(newX, newY, 8, 0, Math.PI*2, false);
         ctx.fill();
     }
 
