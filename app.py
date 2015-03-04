@@ -18,14 +18,6 @@ def listen_send_all(data):
 def brdcast_moving(data):
     emit('moving', data, broadcast=True)
 
-# @socketio.on('erase')
-# def eraser_time(data):
-#     emit('erase_on', data, broadcast=True)
-
-# @socketio.on('draw')
-# def paint_time(data):
-#     emit('erase_off', data, broadcast=True)
-
 if __name__ == '__main__':
     socketio.run(app, host='127.0.0.1', port=5000)
     
