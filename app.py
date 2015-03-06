@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask.ext.socketio import SocketIO, emit, send
 
 app = Flask(__name__)
@@ -24,4 +24,4 @@ def delete_unloaded(data):
     print data
 
 if __name__ == '__main__':
-    socketio.run(app, port=5000)
+    socketio.run(app, host='127.0.0.1', port=5000)

@@ -13,7 +13,6 @@ $(document).ready(function () {
     draw = true,
     users = {},
     cursors = {},
-    path = [],
     lastEmit = $.now(),
     lastX,
     lastY,
@@ -93,24 +92,16 @@ $(document).ready(function () {
     });
 
     $(canvas).mousemove(function(e){
-        if (paint) {
         currentX = e.pageX - this.offsetLeft;
         currentY = e.pageY - this.offsetTop;
-        path.push( { 'x' : currentX, 'y' : currentY } );
-        }
-
-        //make an array emit array.
-        //            for( var i=1; i<data.path.length; i++ ) {
-            //     ctx.lineTo( path[i].x, path[i].y );
-            // }
         if($.now() - lastEmit > 10){
-            // socket.emit('mousemove',{
-            //     'remote_x': e.pageX - this.offsetLeft,
-            //     'remote_y': e.pageY - this.offsetTop,
-            //     'remote_paint': paint,
-            //     'remote_draw': draw,
-            //     'remote_id': id
-            // }); 
+            socket.emit('mousemove',{
+                'remote_x': e.pageX - this.offsetLeft,
+                'remote_y': e.pageY - this.offsetTop,
+                'remote_paint': paint,
+                'remote_draw': draw,
+                'remote_id': id
+            }); 
             lastEmit = $.now();
         }
         
@@ -146,26 +137,12 @@ $(document).ready(function () {
 
     /*----------------------------------------------
                 Tool Functions
-    ------------------------------------------------*/ 
-
-    function signUpLogIn(){
-        return '<div class="modal fade userNameModal">' +
-        '<div class="modal-header">' +
-        '<h3>Create a user name.</h3>' +
-        '</div>' +
-        '<div class="modal-body">' +
-        '<input type="text" size="30" name="name" class="userNameInput">' +
-        '</div>' +
-        '<div class="modal-footer">' +
-        '<a href="#" class="btn confirm" data-dismiss="modal">Confirm</a>' +
-        '</div>' +
-        '</div>';
-    } 
+    ------------------------------------------------*/  
 
 
     function eraser(lastX, lastY, newX, newY){
         ctx.globalCompositeOperation="destination-out";
-        ctx.strokeStyle = 'rgba(0,0,0,1)';
+        // ctx.strokeStyle = 'rgba(0,0,0,1)';
         ctx.beginPath();
         ctx.moveTo(lastX, lastY);
         ctx.lineTo(newX, newY);
