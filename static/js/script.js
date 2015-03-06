@@ -13,15 +13,12 @@ $(document).ready(function () {
     draw = true,
     users = {},
     cursors = {},
+    path = [],
     lastEmit = $.now(),
     lastX,
     lastY,
     currentX,
     currentY;
-
-    var pixelDataRef = new Firebase('https://vivid-heat-9597.firebaseio.com/');
-    
-
 
     ctx.lineWidth = 5;
     ctx.lineJoin = 'round';
@@ -96,16 +93,24 @@ $(document).ready(function () {
     });
 
     $(canvas).mousemove(function(e){
+        if (paint) {
         currentX = e.pageX - this.offsetLeft;
         currentY = e.pageY - this.offsetTop;
+        path.push( { 'x' : currentX, 'y' : currentY } );
+        }
+
+        //make an array emit array.
+        //            for( var i=1; i<data.path.length; i++ ) {
+            //     ctx.lineTo( path[i].x, path[i].y );
+            // }
         if($.now() - lastEmit > 10){
-            socket.emit('mousemove',{
-                'remote_x': e.pageX - this.offsetLeft,
-                'remote_y': e.pageY - this.offsetTop,
-                'remote_paint': paint,
-                'remote_draw': draw,
-                'remote_id': id
-            }); 
+            // socket.emit('mousemove',{
+            //     'remote_x': e.pageX - this.offsetLeft,
+            //     'remote_y': e.pageY - this.offsetTop,
+            //     'remote_paint': paint,
+            //     'remote_draw': draw,
+            //     'remote_id': id
+            // }); 
             lastEmit = $.now();
         }
         
