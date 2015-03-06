@@ -19,6 +19,10 @@ $(document).ready(function () {
     currentX,
     currentY;
 
+    var pixelDataRef = new Firebase('https://vivid-heat-9597.firebaseio.com/');
+    
+
+
     ctx.lineWidth = 5;
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
@@ -137,7 +141,21 @@ $(document).ready(function () {
 
     /*----------------------------------------------
                 Tool Functions
-    ------------------------------------------------*/  
+    ------------------------------------------------*/ 
+
+    function signUpLogIn(){
+        return '<div class="modal fade userNameModal">' +
+        '<div class="modal-header">' +
+        '<h3>Create a user name.</h3>' +
+        '</div>' +
+        '<div class="modal-body">' +
+        '<input type="text" size="30" name="name" class="userNameInput">' +
+        '</div>' +
+        '<div class="modal-footer">' +
+        '<a href="#" class="btn confirm" data-dismiss="modal">Confirm</a>' +
+        '</div>' +
+        '</div>';
+    } 
 
 
     function eraser(lastX, lastY, newX, newY){
