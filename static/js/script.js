@@ -32,12 +32,12 @@ $(document).ready(function () {
     /*-----------------------------------------------------------
                     Socket Events // Remote Users
     -------------------------------------------------------------*/
+
     socket.on('moving', function (data) {
-       
         if(!(data.remote_id in users)){
             cursors[data.remote_id] = $('<p>').appendTo('#cursors');
         }
-        
+
         if (data.remote_id != id) {
             cursors[data.remote_id].css({
                 'left' : data.remote_x - this.offsetLeft,
@@ -77,6 +77,7 @@ $(document).ready(function () {
     /*----------------------------------------------
                     Mouse Events
     ------------------------------------------------*/
+
     $(canvas).mousedown(function(e){
         lastX = e.pageX - this.offsetLeft;
         lastY  = e.pageY - this.offsetTop;
@@ -124,6 +125,8 @@ $(document).ready(function () {
         draw = false;
     });
 
+    $("#save").click(save);
+
     /*----------------------------------------------
              Remove User if They Close Or 
               Navigate Away from Window
@@ -139,25 +142,49 @@ $(document).ready(function () {
                 Tool Functions
     ------------------------------------------------*/
 
-    // function signUpLogIn(){
-    // return '<div class="modal fade userNameModal">' +
-    // '<div class="modal-header">' +
-    // '<h3>Create a user name.</h3>' +
-    // '</div>' +
-    // '<div class="modal-body">' +
-    // '<input type="text" size="30" name="name" class="userNameInput">' +
-    // '</div>' +
-    // '<div class="modal-footer">' +
-    // '<a href="#" class="btn confirm" data-dismiss="modal">Confirm</a>' +
-    // '</div>' +
-    // '</div>';
-    // } 
-  
+    //saves the canvas into a string as a base64 png image.   
+    //jsvalue is sent to the server by an html form
 
+    //Saving image to database currently bugged.
+
+    function save(){            
+        var img = canvas.toDataURL("image/png"); 
+        userArt = window.open(img, "Right click to Save!", "width=500, height=500");
+
+        // $.post("/saveImage", {imgBase64: img});  
+        }
+
+    function signUpLogIn(){
+    return '<div class="modal fade" id="signInModal">' +
+    '<div class="modal-dialog">' +
+    '<div class="modal-content">' +
+    '<div class="modal-header">' +
+    '<h3 class="modal-title">Sign Up or Log In!</h3>' +
+    '</div>' +
+    '<div class="modal-body">' + 
+    '<p>Username: <input type="text" size="30" name="username" class="userNameInput"></p>' +
+    '<p>Password: <input type="password" size="60" name="password" class="userPassInput">' +
+    '</div>' +
+    '<div class="modal-footer">' +
+    '<button type="button" class="btn btn-confirm" data-dismiss="modal">Confirm</button>' +
+    '</div>' + // footer
+    '</div>' + // content
+    '</div>' + // dialog
+    '<div>';
+    } 
+
+    $("body").append(signUpLogIn());
+    $('#signInModal').on('shown.bs.modal', function () {
+        $(".confirm").click(function () {
+            users[username] = $(".userNameInput").val().trim();
+            users[password] = $(".userPassInput").val();
+        });
+    });
+
+    $('#signInModal').modal("show");
 
     function eraser(lastX, lastY, newX, newY){
         ctx.globalCompositeOperation="destination-out";
-        // ctx.strokeStyle = 'rgba(0,0,0,1)';
         ctx.beginPath();
         ctx.moveTo(lastX, lastY);
         ctx.lineTo(newX, newY);

@@ -103,6 +103,7 @@ $(document).ready(function () {
         //            for( var i=1; i<data.path.length; i++ ) {
             //     ctx.lineTo( path[i].x, path[i].y );
             // }
+            //mouse delta
         if($.now() - lastEmit > 10){
             socket.emit('mousemove',{
                 'remote_x': e.pageX - this.offsetLeft,
@@ -161,6 +162,8 @@ $(document).ready(function () {
     //     '</div>' +
     //     '</div>';
     // } 
+
+    
 
 
     function eraser(lastX, lastY, newX, newY){
