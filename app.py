@@ -1,7 +1,6 @@
-from flask import Flask, render_template, request, session, redirect, url_for, flash, g
+from flask import Flask, render_template, request, session as flask_session, redirect, url_for, flash, g
 from flask.ext.socketio import SocketIO, emit, send
-from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
-from model import User
+import model
 import base64, os, uuid, re
 
 UPLOAD_FOLDER = '/Desktop/Hackbright/Hackbright_Project/static/img'
@@ -13,28 +12,29 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # should probably hide this secret key at some point?
 app.config['SECRET_KEY'] = 'TROLOLOLOLOLO!'
 socketio = SocketIO(app)
-login_manager = LoginManager()
-login_manager.init_app(app)
 
-@app.route('/')
-def index():
-    # if g.user is not None and g.user.is_authenticated():
-    #     return redirect(url_for('index'))
+@app.route('/', methods=['GET', 'POST'])
+def sign_up_log_in():
+    if request.method == 'GET':
+        return render_template('index.html')
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        print username, password
 
-    # username = request.form.get("username")
-    # password = request.form.get("password")
+        user = model.get_user_by_username(username)
 
-    # user = model.get_user_by_username(username)
-
-    # if user == None:
-    #     model.add_user_to_db()
-    #     flash("Please login using your new user information.")
-    #     return redirect("/login_route")
-    # else:
-    #     flash("This email is already registered to a user")
-    #     return redirect("/signup")
-
-    return render_template('index.html')
+        if user == None:
+            model.save_user_to_db(username = username, password = password)
+            return "User: %s, Password: %s" % (username, password)
+        else:
+            print user
+            if user.password == password:
+                flask_session["user"] = {"username":user.username, "id":user.id}
+                return "User: %s, Password: %s" % (username, password)
+            else:
+                flash("Email or Password combination do not match our records.")
+                return "User: %s, Password: %s" % (username, password)
 
 
 # @app.route("/saveImage", methods=["POST"])
@@ -54,7 +54,6 @@ def index():
 
 #     model.save_image_to_db(fullpath)
 #     return redirect("/index.html")
-
 
 @socketio.on('connection')
 def listen_send_all(data):

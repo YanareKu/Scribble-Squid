@@ -3,26 +3,37 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship, backref, scoped_session
 
-ENGINE = create_engine("sqlite:///users.db", echo=True)
+ENGINE = create_engine("sqlite:///drawpad.db", echo=True)
 session = scoped_session(sessionmaker(bind=ENGINE, 
-	autocommit = False, 
-	autoflush = False))
+	autocommit=False, 
+	autoflush=False))
 
 Base = declarative_base()
 Base.query = session.query_property()
 
+def create_db():
+    '''Creates a new database when called'''
+    Base.metadata.create_all(ENGINE)
+
 class User(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key=True)
     username = Column(String(30))
     password = Column(String(64))
 
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
     def is_authenticated(self):
         return True
-
+ 
+    def is_active(self):
+        return True
+ 
     def is_anonymous(self):
         return False
-
+ 
     def get_id(self):
         return unicode(self.id)
 
@@ -33,11 +44,11 @@ class User(Base):
 
 class Image(Base):
     __tablename__ = 'images'
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    filepath = Column(String(200), nullable = False) 
+    filepath = Column(String(200), nullable=False)
 
-    user = relationship('User', backref = backref('images'))
+    user = relationship('User', backref=backref('images'))
 
     def __repr__(self):
         return "Image id=%r User_id=%r Filepath=%s" % (
@@ -46,8 +57,8 @@ class Image(Base):
 
 def get_user_by_username(username):
     """returns a user by username from database"""
-    user = session.query(User).filter(User.username == username).first()
-    return user
+    username = session.query(User).filter(User.username == username).first()
+    return username
 
 def save_user_to_db(username, password):
     new_user = User(username=username, password=password)

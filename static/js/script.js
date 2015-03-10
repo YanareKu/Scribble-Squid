@@ -175,9 +175,15 @@ $(document).ready(function () {
 
     $("body").append(signUpLogIn());
     $('#signInModal').on('shown.bs.modal', function () {
-        $(".confirm").click(function () {
-            users[username] = $(".userNameInput").val().trim();
-            users[password] = $(".userPassInput").val();
+        $(".btn-confirm").click(function () {
+            users.username = $(".userNameInput").val().trim();
+            users.password = $(".userPassInput").val();
+            $.post("/", 
+                {'username': users.username,
+                'password': users.password},
+                function (result, error) { alert(result);
+                    if (error) {console.log("OMG WTF!");}
+            });   
         });
     });
 
