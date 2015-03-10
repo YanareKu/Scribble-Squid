@@ -19,17 +19,11 @@ body {
 	font-family:Arial,Helvetica,sans-serif;
 }
 
-.alert-block{
-	position: absolute;
-	top: 50%;
-	left: 40%;
-	z-index: 5;
-}
-
 .btn-default{
 	float:right;
 }
 
-.alert{
-	padding: 8px 21px 8px 15px;
+input[type="submit"]:disabled{
+    opacity:.2;
 }
+

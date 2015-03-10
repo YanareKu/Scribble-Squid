@@ -162,11 +162,11 @@ $(document).ready(function () {
     '<h3 class="modal-title">Sign Up or Log In!</h3>' +
     '</div>' +
     '<div class="modal-body">' + 
-    '<p>Username: <input type="text" size="30" name="username" class="userNameInput"></p>' +
-    '<p>Password: <input type="password" size="60" name="password" class="userPassInput">' +
+    '<p>Username: <input type="text" size="30" class="loginInput" id="username"></p>' +
+    '<p>Password: <input type="password" size="60" class="loginInput" id="password"></p>' +
     '</div>' +
     '<div class="modal-footer">' +
-    '<button type="button" class="btn btn-confirm" data-dismiss="modal">Confirm</button>' +
+    '<input type="submit" id="submitBtn" data-dismiss="modal">' +
     '</div>' + // footer
     '</div>' + // content
     '</div>' + // dialog
@@ -175,9 +175,19 @@ $(document).ready(function () {
 
     $("body").append(signUpLogIn());
     $('#signInModal').on('shown.bs.modal', function () {
-        $(".btn-confirm").click(function () {
-            users.username = $(".userNameInput").val().trim();
-            users.password = $(".userPassInput").val();
+        $('#submitBtn').attr('disabled', 'disabled');
+
+        $('input[type=text], input[type=password]').keyup(function() {      
+            if ($('#username').val() !=='' && $('#password').val() !== '') {    
+                $('#submitBtn').removeAttr('disabled');
+            } else {
+                $('#submitBtn').attr('disabled', 'disabled');
+            }
+        });
+
+        $("#submitBtn").click(function () {
+            users.username = $("#username").val().trim();
+            users.password = $("#password").val();
             $.post("/", 
                 {'username': users.username,
                 'password': users.password},
@@ -187,7 +197,7 @@ $(document).ready(function () {
         });
     });
 
-    $('#signInModal').modal("show");
+    $('#signInModal').modal({backdrop: 'static', show: true});
 
     function eraser(lastX, lastY, newX, newY){
         ctx.globalCompositeOperation="destination-out";
