@@ -18,24 +18,12 @@ def create_db():
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    username = Column(String(30))
-    password = Column(String(64))
+    username = Column(String(30), nullable=False)
+    password = Column(String(64), nullable=False)
 
     def __init__(self, username, password):
         self.username = username
         self.password = password
-
-    def is_authenticated(self):
-        return True
- 
-    def is_active(self):
-        return True
- 
-    def is_anonymous(self):
-        return False
- 
-    def get_id(self):
-        return unicode(self.id)
 
     def __repr__(self):
     	return "User id = %d, username = %s, password = %s" % (
@@ -46,14 +34,13 @@ class Image(Base):
     __tablename__ = 'images'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    img_name = Column(String(200), nullable=False)
-    img_data = Column(String(200), nullable=False)
+    img_array = Column(String(300), nullable=False)
 
     user = relationship('User', backref=backref('images'))
 
     def __repr__(self):
-        return "Image_id=%r User_id=%r Image_name=%s" % (
-            self.id, self.user_id, self.img_name)
+        return "Image_id=%r User_id=%r" % (
+            self.id, self.user_id)
 
 
 def get_user_by_username(username):
@@ -66,8 +53,8 @@ def save_user_to_db(username, password):
     session.add(new_user)
     return session.commit()
 
-def save_image_to_db(user_id, img_name, img_data):
-    new_image = Image(user_id=user_id, img_name=img_name, img_data=img_data)
+def save_image_to_db(user_id, img_array):
+    new_image = Image(user_id=user_id, img_array=img_array)
     session.add(new_image)
     return session.commit()
 

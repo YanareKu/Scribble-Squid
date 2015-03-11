@@ -145,7 +145,7 @@ $(document).ready(function () {
         draw = false;
     });
 
-    $("#save").click(save);
+    $("#save").click(save(canvas, "/static/img/" + "butts" + ".png"));
 
     /*----------------------------------------------
              Remove User if They Close Or 
@@ -213,14 +213,43 @@ $(document).ready(function () {
     /*----------------------------------------------
                 Tool Functions
     ------------------------------------------------*/
+// TERRIFYING ARRAY METHOD
 
-    function save(){            
-        var img = canvas.toDataURL("image/png");
-        userArt = window.open(img, "Right click to Save!", "width=500, height=500");
+    // function save(){            
+    //     var img = canvas.toDataURL("image/png");
+    //     userArt = window.open(img, "Right click to Save!", "width=500, height=500");
 
-        var imgData=ctx.getImageData(0, 0, canvas.width, canvas.height);
-        $.post("/saveImage", {'imgDataArray' : imgData});  
+    //     var imgData=ctx.getImageData(0, 0, canvas.width, canvas.height);
+    //     var imgDataArray = JSON.stringify(imgData);
+
+    //     $.post("/saveImage", {'imgDataArray' : imgDataArray}, 
+    //         function(result) { alert("ARRAY HAS BEEN SENT!"); });  
+    // }
+
+    function save(canvas, filename) {            
+        var canvasData = canvas.toDataURL("image/png");
+        // userArt = window.open(canvasData, "Right click to Save!", "width=500, height=500");
+        //Splits metadata from the image data. Decodes base64 image data.
+        var decodedImg = atob(canvasData.split(',')[1]);
+        var array = [];
+        //decoded data converted to unicode and pushed into array
+        for( var i=0; i<decodedImg.length; ++i ) {
+            array.push( decodedImg.charCodeAt(i) );
+        }
+        //array turned into bytes and then made into a Blob object.
+        var file = new Blob([new Uint8Array(array)], {type: 'image/png'});
+        //'fake' form data sent as ajax to flask server
+        formData = new FormData();
+        formData.append('image', file, filename);
+        $.ajax({
+            url : '/upload',
+            type : 'POST',
+            processData : false,
+            contentType : false,
+            data : formData,
+        });
     }
+    
 
     function makeStroke(lastX, lastY, newX, newY){
         ctx.globalCompositeOperation = "source-over";
