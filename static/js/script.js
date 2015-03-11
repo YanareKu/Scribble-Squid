@@ -145,7 +145,13 @@ $(document).ready(function () {
         draw = false;
     });
 
-    $("#save").click(save(canvas, "/static/img/" + "butts" + ".png"));
+    $("#save").click(function(){
+        save(canvas, "butts" + ".png");
+    });
+
+    $("#load").click(function(){
+        load(canvas);
+    });
 
     /*----------------------------------------------
              Remove User if They Close Or 
@@ -226,9 +232,16 @@ $(document).ready(function () {
     //         function(result) { alert("ARRAY HAS BEEN SENT!"); });  
     // }
 
-    function save(canvas, filename) {            
+    function save(canvas, filename) {
+        console.log("BUTTON HIT!" + filename);     
+        var data = ctx.getImageData( 0, 0, 800, 800 );  
+        for( var i=0; i<2400; i+=4 )
+        {
+            data.data[i]=255;
+        }
+        ctx.putImageData( data, 0, 0 );    
         var canvasData = canvas.toDataURL("image/png");
-        // userArt = window.open(canvasData, "Right click to Save!", "width=500, height=500");
+        //userArt = window.open(canvasData, "Right click to Save!", "width=500, height=500");
         //Splits metadata from the image data. Decodes base64 image data.
         var decodedImg = atob(canvasData.split(',')[1]);
         var array = [];
@@ -241,15 +254,22 @@ $(document).ready(function () {
         //'fake' form data sent as ajax to flask server
         formData = new FormData();
         formData.append('image', file, filename);
+        var callback = function(data) {};
         $.ajax({
             url : '/upload',
             type : 'POST',
             processData : false,
             contentType : false,
             data : formData,
+            success : callback
         });
     }
     
+    function load(canvas) {
+        var image = new Image();
+        image.onload = function() { ctx.drawImage(this, 0, 0); };
+        image.src = "static/img/fish.png";
+    }
 
     function makeStroke(lastX, lastY, newX, newY){
         ctx.globalCompositeOperation = "source-over";

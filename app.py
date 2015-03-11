@@ -3,9 +3,9 @@ from flask.ext.socketio import SocketIO, emit, send
 from werkzeug import secure_filename
 import model, base64, os, uuid, re
 
-UPLOAD_FOLDER = '/static/img'
+UPLOAD_FOLDER = 'static/img'
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.debug = True
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -17,6 +17,7 @@ socketio = SocketIO(app)
 def global_variables():
     if "user" in flask_session:
         g.user_id = flask_session["user"]["id"]
+        g.username = flask_session["user"]["username"]
 
 @app.route('/', methods=['GET', 'POST'])
 def sign_up_log_in():
@@ -58,9 +59,18 @@ def upload():
     file = request.files['image']
     if file:
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+#        NOTE: we cant use os.path because WINDOWS doesn't agree on \ vs /
+#        fullpath = os.path.join(app.config['UPLOAD_FOLDER'], filename) 
+        fullpath = app.config['UPLOAD_FOLDER'] + "/" + g.username + ".png"
+        file.save( fullpath )
         return "Success"
     return "Failure"
+
+@app.route('/static/img/<path:path>')
+def send_js(path):
+    fullpath = g.username + ".png"
+    print "We are actually looking for: " + fullpath
+    return send_from_directory('static/img', fullpath)
 
 # @app.route('/img/<path:path>')
 # def send_js(path):
