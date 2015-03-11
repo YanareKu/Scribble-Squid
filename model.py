@@ -46,13 +46,14 @@ class Image(Base):
     __tablename__ = 'images'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    filepath = Column(String(200), nullable=False)
+    img_name = Column(String(200), nullable=False)
+    img_data = Column(String(200), nullable=False)
 
     user = relationship('User', backref=backref('images'))
 
     def __repr__(self):
-        return "Image id=%r User_id=%r Filepath=%s" % (
-            self.id, self.user_id, self.filepath)
+        return "Image_id=%r User_id=%r Image_name=%s" % (
+            self.id, self.user_id, self.img_name)
 
 
 def get_user_by_username(username):
@@ -65,8 +66,8 @@ def save_user_to_db(username, password):
     session.add(new_user)
     return session.commit()
 
-def save_image_to_db(filepath):
-    new_image = Image(filepath=filepath)
+def save_image_to_db(user_id, img_name, img_data):
+    new_image = Image(user_id=user_id, img_name=img_name, img_data=img_data)
     session.add(new_image)
     return session.commit()
 

@@ -4,6 +4,9 @@ $(document).ready(function () {
                    Set Globals, Canvas, and Stroke
     -------------------------------------------------------------*/
 
+    //Later need to find way to limit the number of globals I use
+    //to optimize code
+
     var canvas = document.getElementById('paper'),
     ctx = canvas.getContext('2d') ? canvas.getContext('2d') : null,
     url = 'http://localhost:5000',
@@ -68,6 +71,14 @@ $(document).ready(function () {
         users[data.remote_id] = data; 
     });
 
+//------------------- TESTING UPLOAD -----------------------//
+
+    socket.on('inferno', function (data) {
+        if(data.remote_id != id) {
+            fireTiger();
+        }
+    });
+
     socket.on('deleteRemoteUser', function (data) {
         cursors[data.remote_id].remove();
         delete users[data.remote_id];
@@ -117,6 +128,15 @@ $(document).ready(function () {
         }
     });
 
+//------------------- TESTING UPLOAD -----------------------//
+
+    $("#FIRE").click(function() {
+        fireTiger();
+        socket.emit('tigerTime', {
+            'remote_id': id
+        });
+    });
+
     $("#draw").click(function(){ 
         draw = true; 
     });
@@ -139,20 +159,8 @@ $(document).ready(function () {
     };
 
     /*----------------------------------------------
-                Tool Functions
+                Sign Up and Log in
     ------------------------------------------------*/
-
-    //saves the canvas into a string as a base64 png image.   
-    //jsvalue is sent to the server by an html form
-
-    //Saving image to database currently bugged.
-
-    function save(){            
-        var img = canvas.toDataURL("image/png"); 
-        userArt = window.open(img, "Right click to Save!", "width=500, height=500");
-
-        // $.post("/saveImage", {imgBase64: img});  
-        }
 
     function signUpLogIn(){
     return '<div class="modal fade" id="signInModal">' +
@@ -166,7 +174,7 @@ $(document).ready(function () {
     '<p>Password: <input type="password" size="60" class="loginInput" id="password"></p>' +
     '</div>' +
     '<div class="modal-footer">' +
-    '<input type="submit" id="submitBtn" data-dismiss="modal">' +
+    '<input type="submit" id="submitBtn">' +
     '</div>' + // footer
     '</div>' + // content
     '</div>' + // dialog
@@ -185,19 +193,42 @@ $(document).ready(function () {
             }
         });
 
-        $("#submitBtn").click(function () {
+        $("#submitBtn").click(function (evt) {
             users.username = $("#username").val().trim();
             users.password = $("#password").val();
             $.post("/", 
                 {'username': users.username,
                 'password': users.password},
-                function (result, error) { alert(result);
-                    if (error) {console.log("OMG WTF!");}
-            });   
+                function (result, error) { 
+                    if (result == "AWWW YIS") {
+                        $('#signInModal').modal('hide');
+                    } else if (result == "AWWW NOO") { 
+                    alert("Whoops! Looks like you've got the wrong username and password combination!");}
+                });
         });
     });
 
     $('#signInModal').modal({backdrop: 'static', show: true});
+
+    /*----------------------------------------------
+                Tool Functions
+    ------------------------------------------------*/
+
+    function save(){            
+        var img = canvas.toDataURL("image/png");
+        userArt = window.open(img, "Right click to Save!", "width=500, height=500");
+
+        var imgData=ctx.getImageData(0, 0, canvas.width, canvas.height);
+        $.post("/saveImage", {'imgDataArray' : imgData});  
+    }
+
+    function makeStroke(lastX, lastY, newX, newY){
+        ctx.globalCompositeOperation = "source-over";
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(newX, newY);
+        ctx.stroke();
+    }
 
     function eraser(lastX, lastY, newX, newY){
         ctx.globalCompositeOperation="destination-out";
@@ -207,12 +238,14 @@ $(document).ready(function () {
         ctx.stroke(); 
     }
 
-    function makeStroke(lastX, lastY, newX, newY){
-        ctx.globalCompositeOperation = "source-over";
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(newX, newY);
-        ctx.stroke(); 
-    }
+//------------------- TESTING UPLOAD -----------------------//
 
+    function fireTiger() {
+        ctx.globalCompositeOperation = "source-over";
+        var base_image = new Image();
+        base_image.src = "http://yanareku.com/illustration/FireElemental.jpg";
+        base_image.onload = function(){
+            ctx.drawImage(base_image, 0, 0);
+        };
+    }
 });

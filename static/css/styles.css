@@ -7,10 +7,6 @@
     display: block;
 }
 
-section, footer, header{
-	display: block;
-}
-
 #cursors{
 	position:relative;
 }
@@ -27,3 +23,13 @@ input[type="submit"]:disabled{
     opacity:.2;
 }
 
+.alert-block{
+	position: absolute;
+	top: 50%;
+	left: 40%;
+	z-index: 5;
+}
+
+.alert{
+	padding: 8px 21px 8px 15px;
+}
