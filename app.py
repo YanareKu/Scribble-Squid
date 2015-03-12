@@ -66,10 +66,10 @@ def save_image():
 def broadcast_image(data):
     emit('loadImage', data, broadcast=True)
 
-@app.route('/static/img/<path:path>')
-def send_js(path):
-    fullpath = g.username + ".png"
-    return send_from_directory('static/img', fullpath)
+# Offers the load() javascript function the path it needs
+@app.route('/static/img/<user_image_path:path>')
+def send_user_image(user_image_path):
+    return send_from_directory('static/img', user_image_path)
 
 @socketio.on('connection')
 def listen_send_all(data):

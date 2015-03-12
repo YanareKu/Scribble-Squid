@@ -72,9 +72,7 @@ $(document).ready(function () {
     });
 
     socket.on('loadImage', function (data) {
-        if(data.remote_id != id) {
-            load(canvas);
-        }
+        load(canvas, data.remote_username);
     });
 
     socket.on('deleteRemoteUser', function (data) {
@@ -141,7 +139,7 @@ $(document).ready(function () {
     $("#load").click(function(){
         load(canvas);
         socket.emit('broadcastImage', {
-            'remote_id': id
+            'remote_username' : users.username,
         });
     });
 
@@ -238,11 +236,12 @@ $(document).ready(function () {
         });
     }
     
-    function load(canvas) {
+    function load(canvas, username) {
         ctx.clearRect(0, 0, 800, 800);
         var image = new Image();
         image.onload = function() {ctx.drawImage(this, 0, 0);};
-        image.src = "static/img/myImage.png";
+        image.src = "static/img/" + username + ".png";
+        console.log(image.src);
     }
 
     function makeStroke(lastX, lastY, newX, newY){
