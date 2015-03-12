@@ -71,11 +71,9 @@ $(document).ready(function () {
         users[data.remote_id] = data; 
     });
 
-//------------------- TESTING UPLOAD -----------------------//
-
-    socket.on('inferno', function (data) {
+    socket.on('loadImage', function (data) {
         if(data.remote_id != id) {
-            fireTiger();
+            load(canvas);
         }
     });
 
@@ -128,15 +126,6 @@ $(document).ready(function () {
         }
     });
 
-//------------------- TESTING UPLOAD -----------------------//
-
-    $("#FIRE").click(function() {
-        fireTiger();
-        socket.emit('tigerTime', {
-            'remote_id': id
-        });
-    });
-
     $("#draw").click(function(){ 
         draw = true; 
     });
@@ -146,11 +135,14 @@ $(document).ready(function () {
     });
 
     $("#save").click(function(){
-        save(canvas, "butts" + ".png");
+        save(canvas, "myImage" + ".png");
     });
 
     $("#load").click(function(){
         load(canvas);
+        socket.emit('broadcastImage', {
+            'remote_id': id
+        });
     });
 
     /*----------------------------------------------
@@ -219,36 +211,17 @@ $(document).ready(function () {
     /*----------------------------------------------
                 Tool Functions
     ------------------------------------------------*/
-// TERRIFYING ARRAY METHOD
 
-    // function save(){            
-    //     var img = canvas.toDataURL("image/png");
-    //     userArt = window.open(img, "Right click to Save!", "width=500, height=500");
-
-    //     var imgData=ctx.getImageData(0, 0, canvas.width, canvas.height);
-    //     var imgDataArray = JSON.stringify(imgData);
-
-    //     $.post("/saveImage", {'imgDataArray' : imgDataArray}, 
-    //         function(result) { alert("ARRAY HAS BEEN SENT!"); });  
-    // }
-
-    function save(canvas, filename) {
-        console.log("BUTTON HIT!" + filename);     
-        var data = ctx.getImageData( 0, 0, 800, 800 );  
-        for( var i=0; i<2400; i+=4 )
-        {
-            data.data[i]=255;
-        }
-        ctx.putImageData( data, 0, 0 );    
+    function save(canvas, filename) {  
+        var data = ctx.getImageData(0, 0, 800, 800);  
         var canvasData = canvas.toDataURL("image/png");
-        //userArt = window.open(canvasData, "Right click to Save!", "width=500, height=500");
+        userArt = window.open(canvasData, "Right click to Save!", "width=500, height=500");
         //Splits metadata from the image data. Decodes base64 image data.
         var decodedImg = atob(canvasData.split(',')[1]);
         var array = [];
         //decoded data converted to unicode and pushed into array
         for( var i=0; i<decodedImg.length; ++i ) {
-            array.push( decodedImg.charCodeAt(i) );
-        }
+            array.push( decodedImg.charCodeAt(i));}
         //array turned into bytes and then made into a Blob object.
         var file = new Blob([new Uint8Array(array)], {type: 'image/png'});
         //'fake' form data sent as ajax to flask server
@@ -256,19 +229,19 @@ $(document).ready(function () {
         formData.append('image', file, filename);
         var callback = function(data) {};
         $.ajax({
-            url : '/upload',
+            url : '/save',
             type : 'POST',
             processData : false,
             contentType : false,
-            data : formData,
-            success : callback
+            data : formData
         });
     }
     
     function load(canvas) {
+        ctx.clearRect(0, 0, 800, 800);
         var image = new Image();
-        image.onload = function() { ctx.drawImage(this, 0, 0); };
-        image.src = "static/img/fish.png";
+        image.onload = function() {ctx.drawImage(this, 0, 0);};
+        image.src = "static/img/myImage.png";
     }
 
     function makeStroke(lastX, lastY, newX, newY){
@@ -285,16 +258,5 @@ $(document).ready(function () {
         ctx.moveTo(lastX, lastY);
         ctx.lineTo(newX, newY);
         ctx.stroke(); 
-    }
-
-//------------------- TESTING UPLOAD -----------------------//
-
-    function fireTiger() {
-        ctx.globalCompositeOperation = "source-over";
-        var base_image = new Image();
-        base_image.src = "http://yanareku.com/illustration/FireElemental.jpg";
-        base_image.onload = function(){
-            ctx.drawImage(base_image, 0, 0);
-        };
     }
 });

@@ -41,51 +41,26 @@ def sign_up_log_in():
             else:
                 return "AWWW NOO"
 
-# ----------------- array method that is terrifying as shit
-# @app.route('/saveImage', methods=['POST'])
-# def save():
-#     if request.method == 'POST':
-#         imgDataArray = request.form['imgDataArray']
-#         model.save_image_to_db(user_id=g.user_id, img_array=imgDataArray)
-#         return "FUCK YEAH CHECK THE DB!"
-#     return "OH FUCK SOMETHING WENT WRONG!"
-
-
-
-
-
-@app.route('/upload', methods=['POST'])
-def upload():
+@app.route('/save', methods=['POST'])
+def save_image():
     file = request.files['image']
     if file:
-        filename = secure_filename(file.filename)
 #        NOTE: we cant use os.path because WINDOWS doesn't agree on \ vs /
 #        fullpath = os.path.join(app.config['UPLOAD_FOLDER'], filename) 
         fullpath = app.config['UPLOAD_FOLDER'] + "/" + g.username + ".png"
-        file.save( fullpath )
+        model.save_image_to_db(g.user_id, fullpath)
+        file.save(fullpath)
         return "Success"
     return "Failure"
+
+@socketio.on('broadcastImage')
+def broadcast_image(data):
+    emit('loadImage', data, broadcast=True)
 
 @app.route('/static/img/<path:path>')
 def send_js(path):
     fullpath = g.username + ".png"
-    print "We are actually looking for: " + fullpath
     return send_from_directory('static/img', fullpath)
-
-# @app.route('/img/<path:path>')
-# def send_js(path):
-#    return send_from_directory('img', path)
-
-# @app.route('/save', methods=['POST'])
-# def save():
-#     img_data = request.files['image']
-#     if img_data:
-#         filename = str(uuid.uuid4()) + '.png'
-#         fullpath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-#         model.save_image_to_db()
-#         img_data.save(fullpath)
-#         return "Success"
-#     return "Failure"
 
 @socketio.on('connection')
 def listen_send_all(data):
@@ -94,12 +69,6 @@ def listen_send_all(data):
 @socketio.on('mousemove')
 def brdcast_moving(data):
     emit('moving', data, broadcast=True)
-
-# ------------------- TESTING UPLOAD -----------------------
-
-@socketio.on('tigerTime')
-def tiger_time(data):
-    emit('inferno', data, broadcast=True)
 
 @socketio.on('deleteUnloaded')
 def delete_unloaded(data):
