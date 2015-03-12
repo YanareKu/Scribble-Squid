@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, session as flask_session, g, send_from_directory
 from flask.ext.socketio import SocketIO, emit, send
 from werkzeug import secure_filename
-import model, base64, os, uuid, re
+import model, base64, re
+# import os
 
 UPLOAD_FOLDER = 'static/img'
 
@@ -13,7 +14,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = 'TROLOLOLOLOLO!'
 socketio = SocketIO(app)
 
-# Both users in same session!! Whyyyyy?
 @app.before_request
 def global_variables():
     if "user" in flask_session:
@@ -25,7 +25,9 @@ def global_variables():
 def sign_up_log_in():
     if request.method == 'GET':
         return render_template('index.html')
+    #----------------------------------------------------------------------
     # Find way to prevent modal from popping up if user already in session.
+    #----------------------------------------------------------------------
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']

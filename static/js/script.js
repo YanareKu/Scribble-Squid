@@ -28,7 +28,7 @@ $(document).ready(function () {
     ctx.strokeStyle = '#1873b5';
 
     if (ctx === null) {
-      alert("You must use a browser that supports HTML5 Canvas to run this demo.");
+      alert("Whoops! You need a browser that supports HTML5 Canvas for this to work!");
       return;
     }
 
@@ -200,7 +200,8 @@ $(document).ready(function () {
                 function (result, error) { 
                     if (result == "AWWW YIS") {
                         $('#signInModal').modal('hide');
-                    } else if (result == "AWWW NOO") { 
+                    } else if (result == "AWWW NOO") {
+                    //----- Think of solution more elegant than alert in future ----
                     alert("Whoops! Looks like you've got the wrong username and password combination!");}
                 });
         });
