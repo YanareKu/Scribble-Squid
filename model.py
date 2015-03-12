@@ -65,6 +65,7 @@ def save_image_to_db(user_id, img_url):
 #------------------------------------------------------------
 # For the future when there can be multiple images per user.
 #------------------------------------------------------------
+
 # def update_image(user_id, img_url):
 #     updated_image = session.query(Image).filter(Image.user_id == user_id).first()
 #     updated_image.img_url = img_url

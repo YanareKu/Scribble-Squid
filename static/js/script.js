@@ -240,7 +240,7 @@ $(document).ready(function () {
         ctx.clearRect(0, 0, 800, 800);
         var image = new Image();
         image.onload = function() {ctx.drawImage(this, 0, 0);};
-        image.src = "static/img/" + username + ".png";
+        image.src = "static/img/temp" + username + ".png";
         console.log(image.src);
     }
 

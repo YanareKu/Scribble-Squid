@@ -4,11 +4,9 @@ from werkzeug import secure_filename
 import model, base64, re
 # import os
 
-UPLOAD_FOLDER = 'static/img'
-
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.debug = True
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = 'static/img/temp'
 
 # should probably hide this secret key at some point?
 app.config['SECRET_KEY'] = 'TROLOLOLOLOLO!'
@@ -67,9 +65,9 @@ def broadcast_image(data):
     emit('loadImage', data, broadcast=True)
 
 # Offers the load() javascript function the path it needs
-@app.route('/static/img/<path:user_image_path>')
+@app.route('/static/img/temp/<path:user_image_path>')
 def send_user_image(user_image_path):
-    return send_from_directory('static/img', user_image_path)
+    return send_from_directory('static/img/temp', user_image_path)
 
 @socketio.on('connection')
 def listen_send_all(data):

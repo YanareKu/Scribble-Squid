@@ -1,4 +1,5 @@
 env/
+env2/
 *.db
 *.pyc
 /static/img/
