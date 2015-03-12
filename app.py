@@ -67,7 +67,7 @@ def broadcast_image(data):
     emit('loadImage', data, broadcast=True)
 
 # Offers the load() javascript function the path it needs
-@app.route('/static/img/<user_image_path:path>')
+@app.route('/static/img/<path:user_image_path>')
 def send_user_image(user_image_path):
     return send_from_directory('static/img', user_image_path)
 
