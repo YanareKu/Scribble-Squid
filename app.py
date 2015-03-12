@@ -13,26 +13,27 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = 'TROLOLOLOLOLO!'
 socketio = SocketIO(app)
 
+# Both users in same session!! Whyyyyy?
 @app.before_request
 def global_variables():
     if "user" in flask_session:
         g.user_id = flask_session["user"]["id"]
         g.username = flask_session["user"]["username"]
+        print flask_session
 
 @app.route('/', methods=['GET', 'POST'])
 def sign_up_log_in():
     if request.method == 'GET':
         return render_template('index.html')
-    # if user already in session how to stop modal from popping up?
+    # Find way to prevent modal from popping up if user already in session.
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        print username, password
 
         user = model.get_user_by_username(username)
 
         if user == None:
-            model.save_user_to_db(username=username, password=password)
+            model.save_user_to_db(username, password)
             return "User entered into database."
         else:
             if user.password == password:
@@ -45,12 +46,18 @@ def sign_up_log_in():
 def save_image():
     file = request.files['image']
     if file:
-#        NOTE: we cant use os.path because WINDOWS doesn't agree on \ vs /
+#        NOTE: Cant use os.path because WINDOWS doesn't agree on \ vs /
 #        fullpath = os.path.join(app.config['UPLOAD_FOLDER'], filename) 
         fullpath = app.config['UPLOAD_FOLDER'] + "/" + g.username + ".png"
-        model.save_image_to_db(g.user_id, fullpath)
         file.save(fullpath)
-        return "Success"
+
+        image = model.get_image_by_user_id(g.user_id)
+
+        if image == None:
+            model.save_image_to_db(g.user_id, fullpath)
+            return "Image URL entered into database."
+        else:
+            return 
     return "Failure"
 
 @socketio.on('broadcastImage')
@@ -73,7 +80,6 @@ def brdcast_moving(data):
 @socketio.on('deleteUnloaded')
 def delete_unloaded(data):
     emit('deleteRemoteUser', data, broadcast=True)
-    print data
 
 if __name__ == '__main__':
     socketio.run(app, host='127.0.0.1', port=5000)
