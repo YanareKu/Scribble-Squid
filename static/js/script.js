@@ -12,20 +12,29 @@ $(document).ready(function () {
     url = 'http://localhost:5000',
     socket = io.connect(url),
     id = Math.round($.now()*Math.random()),
+    lastEmit = $.now(),
+
+    // Local variables for local brushes
     paint = false,
     draw = true,
-    users = {},
-    cursors = {},
-    lastEmit = $.now(),
+    localLineColor = defaultLineColor,
+    localLineWidth = defaultLineWidth,
     lastX,
     lastY,
     currentX,
-    currentY;
+    currentY,
 
-    ctx.lineWidth = 5;
+    // For storing remote user information
+    users = {},
+    cursors = {};
+
+    // Line defaults
+    var defaultLineColor = "#000000",
+    defaultLineWidth = 5;
+    ctx.fillStyle="white";
+    ctx.fillRect(0,0,500,500);
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
-    ctx.strokeStyle = '#000000';
 
     if (ctx === null) {
       alert("Whoops! You need a browser that supports HTML5 Canvas for this to work!");
@@ -51,8 +60,8 @@ $(document).ready(function () {
             users[data.remote_id] && 
             data.remote_id != id && 
             data.remote_draw === true){
-                ctx.strokeStyle = data.remote_color;
-                makeStroke(
+                makeStroke(data.remote_color || defaultLineColor,
+                    data.remote_thickness || defaultLineWidth,
                     users[data.remote_id].remote_x, 
                     users[data.remote_id].remote_y, 
                     data.remote_x, 
@@ -63,7 +72,8 @@ $(document).ready(function () {
             users[data.remote_id] &&
             data.remote_id != id &&
             data.remote_draw === false){
-                eraser(
+                eraser("white",
+                    data.remote_thickness || defaultLineWidth,
                     users[data.remote_id].remote_x, 
                     users[data.remote_id].remote_y,
                     data.remote_x, 
@@ -107,19 +117,20 @@ $(document).ready(function () {
             socket.emit('mousemove',{
                 'remote_x': e.pageX - this.offsetLeft,
                 'remote_y': e.pageY - this.offsetTop,
-                'remote_color': ctx.strokeStyle,
                 'remote_paint': paint,
                 'remote_draw': draw,
-                'remote_id': id
+                'remote_id': id,
+                'remote_color': localLineColor,
+                'remote_thickness': localLineWidth
             }); 
             lastEmit = $.now();
         }
         
         if(paint){
             if(draw){
-                makeStroke(lastX, lastY, currentX, currentY); 
+                makeStroke(localLineColor, localLineWidth, lastX, lastY, currentX, currentY); 
             } else if(draw === false) {
-                eraser(lastX, lastY, currentX, currentY); 
+                eraser("white", localLineWidth, lastX, lastY, currentX, currentY); 
             }
             lastX = currentX;
             lastY = currentY; 
@@ -144,6 +155,9 @@ $(document).ready(function () {
             'remote_username' : users.username,
         });
     });
+
+     $("#brush_slider").on("change", function() {
+        localLineWidth = this.value;});
 
     /*----------------------------------------------
              Remove User if They Close Or 
@@ -213,6 +227,11 @@ $(document).ready(function () {
                 Tool Functions
     ------------------------------------------------*/
 
+    function brushSize() {
+    var x = document.getElementById("brushSize").value;
+    document.getElementById("demo").innerHTML = x;
+}
+
     function save(canvas, filename) {  
         var data = ctx.getImageData(0, 0, 800, 800);  
         var canvasData = canvas.toDataURL("image/png");
@@ -246,20 +265,13 @@ $(document).ready(function () {
         console.log(image.src);
     }
 
-    function makeStroke(lastX, lastY, newX, newY){
-        ctx.globalCompositeOperation = "source-over";
+    function makeStroke(color, thickness, lastX, lastY, newX, newY){
+        ctx.strokeStyle = color;
+        ctx.lineWidth   = thickness;
         ctx.beginPath();
         ctx.moveTo(lastX, lastY);
         ctx.lineTo(newX, newY);
         ctx.stroke();
-    }
-
-    function eraser(lastX, lastY, newX, newY){
-        ctx.globalCompositeOperation="destination-out";
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(newX, newY);
-        ctx.stroke(); 
     }
 
     /*--------------------------------------------------
@@ -300,7 +312,7 @@ $(document).ready(function () {
                 _('mHEX').innerHTML=color.HSV_HEX(hsv); 
                 _S('plugID').background='#'+_('mHEX').innerHTML;
                 color.cords(W);
-                ctx.strokeStyle = '#'+_('mHEX').innerHTML;
+                localLineColor = '#'+_('mHEX').innerHTML;
             }
 
             else if(o=='mSize') { var b=Math.max(Math.max(v[0],v[1])+oH,75); color.cords(b);
