@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
         <title>Drawing App</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-        <link rel="stylesheet" href="static/css/styles.css" />
+        <link rel="stylesheet" href="static/css/styles.css">
         <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
         <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
@@ -12,17 +12,26 @@
         
     </head>
     <body>
-		<div id="brushes">
-		</div>
-        <center>
+		<div id="brushes"></div>
+        <div id="mini" onmousedown="Picker.core('mini',event)">
+            <div class="north">
+                <span id="mHEX">FFFFFF</span>
+                <div onmousedown="\_S('mini').display='none';">X</div>
+            </div>
+            <div class="south" id="mSpec" style="HEIGHT: 128px; WIDTH: 128px;" onmousedown="Picker.core('mCur',event)">
+                <div id="mCur" style="TOP: 86px; LEFT: 68px;"></div>
+                <img src="static/img/circle.png" onmousedown="return false;" ondrag="return false;" onselectstart="return false;">
+                <img src="static/img/resize.gif" id="mSize" onmousedown="Picker.core('mSize',event); return false;" ondrag="return false;" onselectstart="return false;">
+            </div>
+        </div>
+        <div id="plugID" style="display: inline-block; vertical-align:top; HEIGHT: 100px; WIDTH: 100px; MARGIN: 12px 0 0 170px; PADDING-TOP: 60px; COLOR: #000; BORDER: 1px solid #333; TEXT-ALIGN: center; FONT-SiZE: 25px; BACKGROUND: #333;"></div>
+		<canvas id="paper" width="500" height="500" style="display: inline-block;"></canvas>
+        <div id="buttons" style="display: inline-block; vertical-align:top;">
         <button id="draw">Brush</button>
         <button id="eraser">Eraser</button>
         <button id="save">Save</button>
         <button id="load">Load</button>
-		<canvas id="paper" width="800" height="800"></canvas>
-
-
-    	
+        </div>
         
     </body>
 </html>

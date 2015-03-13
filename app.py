@@ -34,7 +34,7 @@ def sign_up_log_in():
 
         if user == None:
             model.save_user_to_db(username, password)
-            return "User entered into database."
+            return "AWWW YIS"
         else:
             if user.password == password:
                 flask_session["user"] = {"username":user.username, "id":user.id}
@@ -76,6 +76,10 @@ def listen_send_all(data):
 @socketio.on('mousemove')
 def brdcast_moving(data):
     emit('moving', data, broadcast=True)
+
+@socketio.on('broadcastColor')
+def brdcast_color(data):
+    emit('strokeColor', data, broadcast=True)
 
 @socketio.on('deleteUnloaded')
 def delete_unloaded(data):
