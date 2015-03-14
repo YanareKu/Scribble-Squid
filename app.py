@@ -1,12 +1,13 @@
 from flask import Flask, render_template, request, session as flask_session, g, send_from_directory
 from flask.ext.socketio import SocketIO, emit, send
-from werkzeug import secure_filename
-import model, base64, re
+import model
 # import os
+
+UPLOAD_FOLDER = 'static/img'
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.debug = True
-app.config['UPLOAD_FOLDER'] = 'static/img/temp'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # should probably hide this secret key at some point?
 app.config['SECRET_KEY'] = 'TROLOLOLOLOLO!'
@@ -17,7 +18,7 @@ def global_variables():
     if "user" in flask_session:
         g.user_id = flask_session["user"]["id"]
         g.username = flask_session["user"]["username"]
-        print flask_session
+        # return 'OK'
 
 @app.route('/', methods=['GET', 'POST'])
 def sign_up_log_in():
@@ -34,7 +35,7 @@ def sign_up_log_in():
 
         if user == None:
             model.save_user_to_db(username, password)
-            return "AWWW YIS"
+            return "User entered into database."
         else:
             if user.password == password:
                 flask_session["user"] = {"username":user.username, "id":user.id}
@@ -42,14 +43,15 @@ def sign_up_log_in():
             else:
                 return "AWWW NOO"
 
+# Discovered problematic bug here.  Internal Error 500.
 @app.route('/save', methods=['POST'])
 def save_image():
-    file = request.files['image']
-    if file:
+    img = request.files['image']
+    if img:
 #        NOTE: Cant use os.path because WINDOWS doesn't agree on \ vs /
 #        fullpath = os.path.join(app.config['UPLOAD_FOLDER'], filename) 
         fullpath = app.config['UPLOAD_FOLDER'] + "/" + g.username + ".png"
-        file.save(fullpath)
+        img.save(fullpath)
 
         image = model.get_image_by_user_id(g.user_id)
 
@@ -57,7 +59,7 @@ def save_image():
             model.save_image_to_db(g.user_id, fullpath)
             return "Image URL entered into database."
         else:
-            return 
+            return 'OK' 
     return "Failure"
 
 @socketio.on('broadcastImage')
@@ -65,10 +67,10 @@ def broadcast_image(data):
     emit('loadImage', data, broadcast=True)
 
 # Offers the load() javascript function the path it needs
-@app.route('/static/img/temp/<path:user_image_path>')
-def send_user_image(user_image_path):
-    return send_from_directory('static/img/temp', user_image_path)
-
+@app.route('/static/img/<path:path>')
+def send_user_image(path):
+    return send_from_directory('static/img', path)
+    
 @socketio.on('connection')
 def listen_send_all(data):
     emit('new user')

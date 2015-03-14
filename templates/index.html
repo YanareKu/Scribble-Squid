@@ -8,7 +8,7 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
         <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-        <script src="static/js/script_other.js"></script>
+        <script src="static/js/script.js"></script>
         
     </head>
     <body>
@@ -31,10 +31,10 @@
         <button id="eraser">Eraser</button>
         <button id="save">Save</button>
         <button id="load">Load</button><br>
-        <br>
         <label for="brushSize">Brush Size</label>
-        <input type="range" min="1" max="30" value="5" id="brush_slider">
+        <input type="range" min="1" max="30" value="15" id="brush_size"><br>
+        <label for="opacity">Opacity</label>
+        <input type="range" min="0.0" max="1.0" step=".01" value="1.0" id="opacity">
         </div>
-
     </body>
 </html>
