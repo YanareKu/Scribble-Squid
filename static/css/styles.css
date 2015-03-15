@@ -1,10 +1,22 @@
-#paper{
-    border:solid 1px #000000;    
+#lower {    
     padding-left: 0;
     padding-right: 0;
     margin-left: auto;
     margin-right: auto;
-    display: block;
+    position: absolute;
+}
+
+#upper {
+	border:solid 1px #000000;
+	padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+}
+
+label {
+	color: #FFFFFF;
 }
 
 #cursors{

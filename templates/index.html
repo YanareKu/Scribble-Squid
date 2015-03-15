@@ -25,7 +25,6 @@
             </div>
         </div>
         <div id="plugID" style="display: inline-block; vertical-align:top; HEIGHT: 100px; WIDTH: 100px; MARGIN: 12px 0 0 170px; PADDING-TOP: 60px; COLOR: #000; BORDER: 1px solid #333; TEXT-ALIGN: center; FONT-SiZE: 25px; BACKGROUND: #333;"></div>
-		<canvas id="paper" width="500" height="500" style="display: inline-block;"></canvas>
         <div id="buttons" style="display: inline-block; vertical-align:top;">
         <button id="draw">Brush</button>
         <button id="eraser">Eraser</button>
@@ -35,6 +34,8 @@
         <input type="range" min="1" max="30" value="15" id="brush_size"><br>
         <label for="opacity">Opacity</label>
         <input type="range" min="0.0" max="1.0" step=".01" value="1.0" id="opacity">
-        </div>
+        </div><br>
+        <canvas id="lower" width="1920" height="1080" class="lower absolute"></canvas>
+        <canvas id="upper" width="1920" height="1080" class="upper absolute"></canvas>
     </body>
 </html>
