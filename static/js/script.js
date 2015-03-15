@@ -175,7 +175,7 @@ $(document).ready(function () {
 
     $(canvasUpper).mouseup(function(e){
         paint = false;
-            socket.emit('mouseout', {
+            socket.emit('mouseup', {
                 'remote_x': x,
                 'remote_y': y,
                 'remote_paint': paint,
