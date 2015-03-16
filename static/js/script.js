@@ -15,8 +15,9 @@ $(document).ready(function () {
     socket = io.connect(url),
     id = Math.round($.now()*Math.random()),
     lastEmit = $.now(),
-    paint = false,
-    draw = true,
+    draw = false,
+    airbrush = false,
+    pencil = true,
     dragging = false,
     defaultLineColor = "#000000",
     defaultLineWidth = 15,
@@ -28,8 +29,12 @@ $(document).ready(function () {
     loadOpacity = 1.0,
     users = {},
     cursors = {},
-    x,
-    y;
+    lastPoint,
+    colorStopBegin = 'rgba(0,0,0,1)',
+    colorStopMid = 'rgba(0,0,0,0.3)',
+    colorStopEnd = 'rgba(0,0,0,0)',
+    mouseX,
+    mouseY;
 
     ctxLower.fillStyle = "white";
     ctxLower.fillRect(0, 0, canvasLower.width, canvasLower.height);
@@ -52,63 +57,89 @@ $(document).ready(function () {
 
         if (data.remote_id != id) {
             cursors[data.remote_id].css({
-                'left' : data.remote_x - this.offsetLeft,
-                'top' : data.remote_y - this.offsetTop});
+                'left' : data.remote_mouseX - this.offsetLeft,
+                'top' : data.remote_mouseY - this.offsetTop});
         }
 
-        if(data.remote_paint && 
+        if(data.remote_draw && 
             users[data.remote_id] && 
             data.remote_id != id && 
-            data.remote_draw === true){
+            data.remote_pencil === true){
                 ctxUpper.clearRect(0, 0, canvasLower.width, canvasLower.height);
                 makeStroke(ctxUpper,
                     data.remote_color || defaultLineColor,
                     data.remote_width || defaultLineWidth,
                     data.remote_opacity || defaultLineOpacity, 
-                    data.remote_x, 
-                    data.remote_y);
-        }
+                    data.remote_mouseX, 
+                    data.remote_mouseY);
 
-        if(data.remote_paint &&
+        // } else if(data.remote_draw &&
+        //     users[data.remote_id] &&
+        //     data.remote_id != id &&
+        //     data.remote_airbrush === true){ 
+        //         var dist = distanceBetween(data.remote_lastPoint, data.remote_currentPoint),
+        //         angle = angleBetween(data.remote_lastPoint, data.remote_currentPoint);
+              
+        //         for (var i = 0; i < dist; i+=5) {
+                
+        //             airX = data.remote_lastPoint.x + (Math.sin(angle) * i);
+        //             airY = data.remote_lastPoint.y + (Math.cos(angle) * i);
+                    
+        //             var softbrush = ctxLower.createRadialGradient(airX, airY, 1, airX, airY, 30);
+                    
+        //             softbrush.addColorStop(0, data.remote_colorStopBegin);
+        //             softbrush.addColorStop(0.0, data.remote_colorStopMid);
+        //             softbrush.addColorStop(1, data.remote_colorStopEnd);
+                    
+        //             ctxLower.fillStyle = softbrush;
+        //             ctxLower.fillRect(airX-40, airY-40, 80, 80);
+        //         }
+
+        } else if(data.remote_draw &&
             users[data.remote_id] &&
             data.remote_id != id &&
-            data.remote_draw === false){
+            data.remote_pencil === false &&
+            data.remote_airbrush === false){
                 ctxUpper.clearRect(0, 0, canvasLower.width, canvasLower.height);
                 makeStroke(ctxUpper, 
                     "#FFFFFF",
                     data.remote_width || defaultLineWidth,
                     data.remote_opacity || defaultLineOpacity,
-                    data.remote_x, 
-                    data.remote_y);
+                    data.remote_mouseX, 
+                    data.remote_mouseY);
         }
+
         users[data.remote_id] = data; 
+    
     });
 
     socket.on('stopping', function(data) {
-        if(data.remote_paint === false && 
+        if(data.remote_draw === false && 
             users[data.remote_id] && 
             data.remote_id != id && 
-            data.remote_draw === true){
+            data.remote_pencil &&
+            data.remote_airbrush === false){
                 ctxUpper.clearRect(0, 0, canvasLower.width, canvasLower.height);
                 makeStroke(ctxLower,
                     data.remote_color || defaultLineColor,
                     data.remote_width || defaultLineWidth,
                     data.remote_opacity || defaultLineOpacity,
-                    data.remote_x, 
-                    data.remote_y);
+                    data.remote_mouseX, 
+                    data.remote_mouseY);
         }
 
-        if(data.remote_paint === false &&
+        if(data.remote_draw === false &&
             users[data.remote_id] &&
             data.remote_id != id &&
-            data.remote_draw === false){
+            data.remote_pencil === false &&
+            data.remote_airbrush === false){
                 ctxUpper.clearRect(0, 0, canvasLower.width, canvasLower.height);
                 makeStroke(ctxLower, 
                     "#FFFFFF",
                     data.remote_width || defaultLineWidth,
                     data.remote_opacity || defaultLineOpacity,
-                    data.remote_x, 
-                    data.remote_y);
+                    data.remote_mouseX, 
+                    data.remote_mouseY);
         }
         users[data.remote_id] = data; 
     });
@@ -128,87 +159,126 @@ $(document).ready(function () {
     ------------------------------------------------*/
 
     $(canvasUpper).mousedown(function(e){
-        x = [e.pageX - this.offsetLeft];
-        y = [e.pageY - this.offsetTop];
-        paint = true;
+        mouseX = [e.pageX - this.offsetLeft];
+        mouseY = [e.pageY - this.offsetTop];
+        lastPoint = { x: e.pageX - this.offsetLeft, y: e.pageY - this.offsetTop};
+        draw = true;
     });
 
     $(canvasUpper).mouseleave(function(e){
-        paint = false ;
+        draw = false ;
     });
 
     $(canvasUpper).mousemove(function(e){
         if($.now() - lastEmit > 10){
             socket.emit('mousemove', {
-                'remote_x': x,
-                'remote_y': y,
-                'remote_paint': paint,
+                'remote_mouseX': mouseX,
+                'remote_mouseY': mouseY,
                 'remote_draw': draw,
+                'remote_pencil': pencil,
+                'remote_airbrush': airbrush,
                 'remote_id': id,
                 'remote_color': localLineColor,
                 'remote_width': localLineWidth,
-                'remote_opacity': localLineOpacity
+                'remote_opacity': localLineOpacity,
+                'remote_currentPoint': currentPoint,
+                'remote_lastPoint': lastPoint,
+                'remote_colorStopBegin': colorStopBegin,
+                'remote_colorStopMid': colorStopMid,
+                'remote_colorStopEnd': colorStopEnd
             }); 
             lastEmit = $.now();
         }
         
-        if(paint){
-            x.push(e.pageX - this.offsetLeft);
-            y.push(e.pageY - this.offsetTop);
-            if(draw){
+        if(draw){
+            mouseX.push(e.pageX - this.offsetLeft);
+            mouseY.push(e.pageY - this.offsetTop);
+
+            if(pencil){
                 ctxUpper.clearRect(0, 0, canvasLower.width, canvasLower.height);
                 makeStroke(ctxUpper, 
                     localLineColor, 
                     localLineWidth, 
                     localLineOpacity, 
-                    x, y);    
-            } else if(draw === false) {
+                    mouseX, mouseY);
+
+            } else if(airbrush) {
+                var currentPoint = {x: e.pageX - this.offsetLeft, y: e.pageY - this.offsetTop},
+                dist = distanceBetween(lastPoint, currentPoint),
+                angle = angleBetween(lastPoint, currentPoint);
+              
+                for (var i = 0; i < dist; i+=5) {
+                
+                    airX = lastPoint.x + (Math.sin(angle) * i);
+                    airY = lastPoint.y + (Math.cos(angle) * i);
+                    
+                    var softbrush = ctxLower.createRadialGradient(airX, airY, 1, airX, airY, 30);
+                    
+                    softbrush.addColorStop(0, colorStopBegin);
+                    softbrush.addColorStop(0.0, colorStopMid);
+                    softbrush.addColorStop(1, colorStopEnd);
+                    
+                    ctxLower.fillStyle = softbrush;
+                    ctxLower.fillRect(airX-40, airY-40, 80, 80);
+                }
+              
+              lastPoint = currentPoint;
+
+            } else if(pencil === false && airbrush === false) {
                 ctxUpper.clearRect(0, 0, canvasLower.width, canvasLower.height);
                 makeStroke(ctxUpper, 
                     "#FFFFFF", 
                     localLineWidth, 
                     localLineOpacity, 
-                    x, y);
+                    mouseX, mouseY);
             }
         }
     });
 
     $(canvasUpper).mouseup(function(e){
-        paint = false;
+        draw = false;
             socket.emit('mouseup', {
-                'remote_x': x,
-                'remote_y': y,
-                'remote_paint': paint,
+                'remote_mouseX': mouseX,
+                'remote_mouseY': mouseY,
                 'remote_draw': draw,
+                'remote_pencil': pencil,
                 'remote_id': id,
                 'remote_color': localLineColor,
                 'remote_width': localLineWidth,
                 'remote_opacity': localLineOpacity
             });
 
-        if(draw){
+        if(pencil){
             ctxUpper.clearRect(0, 0, canvasLower.width, canvasLower.height);
             makeStroke(ctxLower, 
                 localLineColor, 
                 localLineWidth, 
                 localLineOpacity, 
-                x, y);
-        } else if(draw === false) {
+                mouseX, mouseY);
+
+        } else if(pencil === false && airbrush === false) {
             ctxUpper.clearRect(0, 0, canvasLower.width, canvasLower.height);
             makeStroke(ctxLower, 
                 "#FFFFFF", 
                 localLineWidth, 
                 localLineOpacity, 
-                x, y);
+                mouseX, mouseY);
         } 
     });
 
-    $("#draw").click(function(){ 
-        draw = true; 
+    $("#pencil").click(function(){ 
+        pencil = true; 
+        airbrush = false;
     });
 
     $("#eraser").click(function(){ 
-        draw = false;
+        pencil = false;
+        airbrush = false;
+    });
+
+    $("#airbrush").click(function(){ 
+        pencil = false;
+        airbrush = true;
     });
 
     $("#save").click(function(){
@@ -324,7 +394,7 @@ $(document).ready(function () {
         ctxLower.clearRect(0, 0, 800, 800);
         ctxLower.globalAlpha = loadOpacity;
         var image = new Image();
-        image.onload = function() {ctxLower.drawImage(this, 0, 0);};
+        image.onload = function() {ctxLower.pencilImage(this, 0, 0);};
         image.src = "static/img/" + username + ".png";
         console.log(image.src);
     }
@@ -338,6 +408,14 @@ $(document).ready(function () {
         for (i=1; i < x.length; i++){
             ctx.lineTo(x[i],y[i]);}
         ctx.stroke();
+    }
+
+    function distanceBetween(point1, point2) {
+        return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+    }
+
+    function angleBetween(point1, point2) {
+         return Math.atan2( point2.x - point1.x, point2.y - point1.y );
     }
 
     /*--------------------------------------------------
@@ -386,8 +464,7 @@ $(document).ready(function () {
                 _S('mini').height=(b+28)+'px'; _S('mini').width=(b+20)+'px';
                 _S('mSpec').height=b+'px'; _S('mSpec').width=b+'px';
 
-            }
-            else {
+            } else {
             
                 if(xy) v=[M(v[0],xy[0],xy[2]), M(v[1],xy[1],xy[3])]; // XY LIMIT
 
@@ -458,12 +535,23 @@ $(document).ready(function () {
                 case 5: R=V; G=A; B=B; break;
 
             }
+ // ------------------------------------------ASK FOR HELP IN INSERTING THESE!
+            console.log({'R':R?R:0, 'G':G?G:0, 'B':B?B:0, 'A':1});
+            //only prints out R value
+            console.log("rgba(" + R?R:0 + ", " + G?G:0 + ", " + B?B:0 + ", " + 1 + ")");
+            colorStopBegin = "rgba(" + R?R:0 + ", " + G?G:0 + ", " + B?B:0 + ", " + 1 + ")";
+            colorStopMid = "rgba(" + R?R:0 + ", " + G?G:0 + ", " + B?B:0 + ", " + 0.3 + ")";
+            colorStopEnd = "rgba(" + R?R:0 + ", " + G?G:0 + ", " + B?B:0 + ", " + 0 + ")";
 
             return({'R':R?R:0, 'G':G?G:0, 'B':B?B:0, 'A':1});
-
         }
-        else return({'R':(V=Math.round(V*255)), 'G':V, 'B':V, 'A':1});
 
+        else {
+            colorStopBegin = "rgba(" + (V=Math.round(V*255)) + ", " + V + ", " + V + ", " + 1 + ")";
+            colorStopMid = "rgba(" + (V=Math.round(V*255)) + ", " + V + ", " + V + ", " + 0.3 + ")";
+            colorStopEnd = "rgba(" + (V=Math.round(V*255)) + ", " + V + ", " + V + ", " + 0 + ")";
+            return({'R':(V=Math.round(V*255)), 'G':V, 'B':V, 'A':1});
+        }
     };
 
     color.HSV_HEX=function(o) { return(color.RGB_HEX(color.HSV_RGB(o))); };
