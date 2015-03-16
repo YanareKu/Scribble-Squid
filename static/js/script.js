@@ -536,20 +536,20 @@ $(document).ready(function () {
 
             }
  // ------------------------------------------ASK FOR HELP IN INSERTING THESE!
-            console.log({'R':R?R:0, 'G':G?G:0, 'B':B?B:0, 'A':1});
-            //only prints out R value
-            console.log("rgba(" + R?R:0 + ", " + G?G:0 + ", " + B?B:0 + ", " + 1 + ")");
-            colorStopBegin = "rgba(" + R?R:0 + ", " + G?G:0 + ", " + B?B:0 + ", " + 1 + ")";
-            colorStopMid = "rgba(" + R?R:0 + ", " + G?G:0 + ", " + B?B:0 + ", " + 0.3 + ")";
-            colorStopEnd = "rgba(" + R?R:0 + ", " + G?G:0 + ", " + B?B:0 + ", " + 0 + ")";
+            // console.log({'R':R?R:0, 'G':G?G:0, 'B':B?B:0, 'A':1});
+            // //only prints out R value
+            // console.log("rgba(" + R?R:0 + ", " + G?G:0 + ", " + B?B:0 + ", " + 1 + ")");
+            // colorStopBegin = "rgba(" + R?R:0 + ", " + G?G:0 + ", " + B?B:0 + ", " + 1 + ")";
+            // colorStopMid = "rgba(" + R?R:0 + ", " + G?G:0 + ", " + B?B:0 + ", " + 0.3 + ")";
+            // colorStopEnd = "rgba(" + R?R:0 + ", " + G?G:0 + ", " + B?B:0 + ", " + 0 + ")";
 
             return({'R':R?R:0, 'G':G?G:0, 'B':B?B:0, 'A':1});
         }
 
         else {
-            colorStopBegin = "rgba(" + (V=Math.round(V*255)) + ", " + V + ", " + V + ", " + 1 + ")";
-            colorStopMid = "rgba(" + (V=Math.round(V*255)) + ", " + V + ", " + V + ", " + 0.3 + ")";
-            colorStopEnd = "rgba(" + (V=Math.round(V*255)) + ", " + V + ", " + V + ", " + 0 + ")";
+            // colorStopBegin = "rgba(" + (V=Math.round(V*255)) + ", " + V + ", " + V + ", " + 1 + ")";
+            // colorStopMid = "rgba(" + (V=Math.round(V*255)) + ", " + V + ", " + V + ", " + 0.3 + ")";
+            // colorStopEnd = "rgba(" + (V=Math.round(V*255)) + ", " + V + ", " + V + ", " + 0 + ")";
             return({'R':(V=Math.round(V*255)), 'G':V, 'B':V, 'A':1});
         }
     };
