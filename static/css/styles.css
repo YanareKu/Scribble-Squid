@@ -23,6 +23,10 @@ label {
 	position:relative;
 }
 
+input[type="range"] {
+    height: 22px;
+}
+
 body {
 	font-family:Arial,Helvetica,sans-serif;
 	background-color: #343840;
