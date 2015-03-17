@@ -65,6 +65,10 @@ def save_image():
 def broadcast_image(data):
     emit('loadImage', data, broadcast=True)
 
+@socketio.on('reset')
+def reset(data):
+    emit('resetCanvas', data, broadcast=True)
+
 # Offers the load() javascript function the path it needs
 @app.route('/static/img/<path:path>')
 def send_user_image(path):
@@ -78,7 +82,7 @@ def listen_send_all(data):
 def brdcast_moving(data):
     emit('moving', data, broadcast=True)
 
-@socketio.on('mouseout')
+@socketio.on('mouseup')
 def brdcast_stop(data):
     emit('stopping', data, broadcast=True)
 

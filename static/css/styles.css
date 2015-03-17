@@ -36,16 +36,6 @@ input[type="submit"]:disabled{
     opacity:.2;
 }
 
-.alert-block{
-	position: absolute;
-	top: 50%;
-	left: 40%;
-	z-index: 5;
-}
-
-.alert{
-	padding: 8px 21px 8px 15px;
-}
 
 /* PLUGIN - Mini-Sphere Copyright (c) 2010-2015 Michael Deal. All rights reserved. */
 
