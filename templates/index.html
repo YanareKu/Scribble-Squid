@@ -18,19 +18,20 @@
                 <span id="mHEX">FFFFFF</span>
                 <div onmousedown="\_S('mini').display='none';">X</div>
             </div>
-            <div class="south" id="mSpec" style="HEIGHT: 128px; WIDTH: 128px;" onmousedown="Picker.core('mCur',event)">
-                <div id="mCur" style="TOP: 86px; LEFT: 68px;"></div>
+            <div class="south" id="mSpec" style="HEIGHT: 110px; WIDTH: 110px;" onmousedown="Picker.core('mCur',event)">
+                <div id="mCur" style="TOP: 76px; LEFT: 58px;"></div>
                 <img src="static/img/circle.png" onmousedown="return false;" ondrag="return false;" onselectstart="return false;">
                 <img src="static/img/resize.gif" id="mSize" onmousedown="Picker.core('mSize',event); return false;" ondrag="return false;" onselectstart="return false;">
             </div>
         </div>
-        <div id="plugID" style="display: inline-block; vertical-align:top; HEIGHT: 100px; WIDTH: 100px; MARGIN: 22px 0 0 160px; PADDING-TOP: 60px; COLOR: #000; BORDER: 1px solid #333; TEXT-ALIGN: center; FONT-SiZE: 25px; BACKGROUND: #333;"></div>
-        <div id="buttons" style="display: inline-block; vertical-align:top;">
+        <div id="plugID" style="display: inline-block; vertical-align:top; HEIGHT: 100px; WIDTH: 100px; MARGIN: 20px 0 0 160px; PADDING-TOP: 60px; COLOR: #000; BORDER: 1px solid #555; TEXT-ALIGN: center; FONT-SiZE: 25px; BACKGROUND: #333;"></div>
+        <div id="buttons" style="display: inline-block; vertical-align:top; MARGIN: 10px">
         <button id="draw">Brush</button>
         <button id="eraser">Eraser</button>
         <button id="save">Save</button>
         <button id="load">Load</button>
         <button id="reset">Reset</button><br>
+        <br>
         <label for="brushSize">Brush Size</label>
         <input type="range" min="1" max="30" value="15" id="brush_size"><br>
         <label for="opacity">Opacity</label>
