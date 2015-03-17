@@ -78,7 +78,7 @@ def listen_send_all(data):
 def brdcast_moving(data):
     emit('moving', data, broadcast=True)
 
-@socketio.on('mouseup')
+@socketio.on('mouseout')
 def brdcast_stop(data):
     emit('stopping', data, broadcast=True)
 
