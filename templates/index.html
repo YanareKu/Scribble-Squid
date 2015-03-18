@@ -4,15 +4,60 @@
         <meta charset="utf-8" />
         <title>Drawing App</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="static/css/jquery-ui.structure.css">
+        <link rel="stylesheet" href="static/css/jquery-ui.theme.css">
+        <link rel="stylesheet" href="static/css/jquery-ui.css">
         <link rel="stylesheet" href="static/css/styles.css">
         <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
         <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src="static/js/jquery-ui.js"></script>
         <script src="static/js/script.js"></script>
+        <script>
+        $(function() {
+            $("#colorBox").draggable();
+         });
+
+        $(function() {
+            $("#sliders").draggable();
+         });
+
+        $(function() {
+            $("#colorBox").resizable(function() {
+                $(this).children('.colorPrev').css({
+                    height: $(this).height()
+                });
+            });
+        });
+
+         $(function() {
+            $("#sliders" ).resizable({
+              maxHeight: 119,
+              maxWidth: 323,
+              minHeight: 110,
+              minWidth: 249
+            });
+          });
+
+        $(function() {
+            $("#sliders").resizable(function() {
+                $(this).children('#sliderbox').css({
+                    height: $(this).height()
+                });
+            });
+        });
+
+        $(function() {
+            $("#buttons").buttonset();
+        });
+        </script>
         
     </head>
     <body>
+        <canvas id="lower" width="1920" height="1080" class="lower absolute"></canvas>
+        <canvas id="upper" width="1920" height="1080" class="upper absolute"></canvas>
         <div id="brushes"></div>
+
         <div id="mini" onmousedown="Picker.core('mini',event)">
             <div class="north">
                 <span id="mHEX">FFFFFF</span>
@@ -24,20 +69,30 @@
                 <img src="static/img/resize.gif" id="mSize" onmousedown="Picker.core('mSize',event); return false;" ondrag="return false;" onselectstart="return false;">
             </div>
         </div>
-        <div id="plugID" style="display: inline-block; vertical-align:top; HEIGHT: 100px; WIDTH: 100px; MARGIN: 20px 0 0 160px; PADDING-TOP: 60px; COLOR: #000; BORDER: 1px solid #555; TEXT-ALIGN: center; FONT-SiZE: 25px; BACKGROUND: #333;"></div>
-        <div id="buttons" style="display: inline-block; vertical-align:top; MARGIN: 10px">
-        <button id="draw">Brush</button>
-        <button id="eraser">Eraser</button>
-        <button id="save">Save</button>
-        <button id="load">Load</button>
-        <button id="reset">Reset</button><br>
-        <br>
-        <label for="brushSize">Brush Size</label>
-        <input type="range" min="1" max="30" value="15" id="brush_size"><br>
-        <label for="opacity">Opacity</label>
-        <input type="range" min="0.0" max="1.0" step=".01" value="1.0" id="opacity">
-        </div><br>
-        <canvas id="lower" width="750" height="700" class="lower absolute"></canvas>
-        <canvas id="upper" width="750" height="700" class="upper absolute"></canvas>
+        <div id="toolbar">
+            <form>
+                <div id="buttons">
+                    <input type="radio" id="draw" name="tool" checked="checked"><label for="draw">Pencil</label>
+                    <input type="radio" id="eraser" name="tool"><label for="eraser">Erase</label>
+                    <input type="radio" id="save" name="tool"><label for="save">Save</label>
+                    <input type="radio" id="load" name="tool"><label for="load">Load</label>
+                    <input type="radio" id="reset" name="tool"><label for="reset">Reset</label>
+                </div>
+            </form>
+        </div>
+        <div id="colorBox">
+            <div id="colorTitle" class="colorPrev">
+                <span class="colorPrev">Color Preview</span>
+            </div>
+            <div id="plugID" class="colorPrev" style="vertical-align:top; HEIGHT: 100%; WIDTH: 100%; COLOR: #000; BACKGROUND: #333;"></div>
+        </div>
+        <div id="sliders">
+            <div id="sliderbox">
+                <label for="brushSize">Brush Size</label>
+                <input type="range" min="1" max="30" value="15" id="brush_size"><br>
+                <label for="opacity">Opacity</label>
+                <input type="range" min="0.0" max="1.0" step=".01" value="1.0" id="opacity">
+            </div>
+        </div>
     </body>
 </html>

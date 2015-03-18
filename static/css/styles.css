@@ -1,22 +1,26 @@
-#lower {    
+.absolute {
+	position: absolute;
+}
+
+.lower {    
     padding-left: 0;
     padding-right: 0;
     margin-left: auto;
     margin-right: auto;
-    position: absolute;
 }
 
-#upper {
+.upper {
 	border:solid 1px #000000;
 	padding-left: 0;
     padding-right: 0;
     margin-left: auto;
     margin-right: auto;
-    position: absolute;
 }
 
 label {
 	color: #FFFFFF;
+	font-size: .9em;
+	font-weight: 300;
 }
 
 #cursors{
@@ -42,7 +46,6 @@ input[type="submit"]:disabled{
     opacity:.2;
 }
 
-
 /* PLUGIN - Mini-Sphere Copyright (c) 2010-2015 Michael Deal. All rights reserved. */
 
 /* Creates borders for the Color Picker Window */
@@ -50,19 +53,100 @@ input[type="submit"]:disabled{
 .botLine a { COLOR: #e04f92; }
 .botLine a:hover { COLOR: #F360BB; }
 
+
+.ui-button-text-only .ui-button-text {
+	 padding: .4em .2em;
+	 font-size: .8em;
+}
+.ui-buttonset .ui-button {
+    width: 65px;
+    height: 28px;
+}
+
+#plugID{ 
+	border: 5px solid #111;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+#colorBox {
+	color: #999;
+	cursor: move;
+	font-family: arial, helvetica, san-serif; 
+	font-size: 11px; 
+	position: absolute;
+	left: 135px;
+	height: 132px; 
+	width: 131px;
+
+}
+
+#colorBox .ui-resizable-se {
+  bottom: -15px;
+}
+
+#colorTitle{ 
+	background: #111;
+	border: 3px solid #111;
+	border-bottom: 3px solid #171717;
+	border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+#toolbar {
+	color: #999;
+	cursor: move;
+	position: absolute;
+	left: 268px;
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    background: -webkit-linear-gradient(left, #256994, #47A3FF); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(left, #256994, #47A3FF); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(left, #256994, #47A3FF); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(left, #256994, #47A3FF);
+	border: 1px solid #4BB7FA;
+    width: 240px;
+    height: 6px;
+}
+
+#sliders { 
+    background: -webkit-linear-gradient(#444444, #000000); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#444444, #000000); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#444444, #000000); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#444444, #000000);
+	color: #999;
+	cursor: move;
+	position: absolute; 
+	width: 322px;
+	height: 119px;
+	border: 1px solid #555;
+    border-radius: 6px;
+    left: 268px;
+    top: 30px;
+  }
+
+#sliderbox {
+  	margin-left: auto;
+  	margin-right: auto;
+  	padding-top: 15px; 
+  	width: 240px;
+}
+
 #mini { 
-	COLOR: #999;
-	CURSOR: move;
-	FONT-FAMILY: arial, helvetica, san-serif; 
-	FONT-SIZE: 11px; 
-	POSITION: absolute; 
+	color: #999;
+	cursor: move;
+	font-family: arial, helvetica, san-serif; 
+	font-size: 11px; 
+	position: absolute; 
 	background: #000; 
 	padding-bottom: 8px; 
 	border: 1px solid #111;
-	height: 139px; width: 131px; 
-/*	WIDTH: 148px; 
-	HEIGHT: 155px; */
-	Z-INDEX: 100;
+	border-radius: 6px;
+	height: 139px; 
+	width: 131px; 
+	z-index: 100;
 	 box-sizing: content-box;
 	-webkit-box-sizing: content-box;
   	-moz-box-sizing: content-box; 
