@@ -108,7 +108,7 @@ input[type=range] {
     background: linear-gradient(left, #256994, #47A3FF);
 	border: 1px solid #4BB7FA;
     width: 240px;
-    height: 6px;
+    height: 7px;
 }
 
 #sliders { 

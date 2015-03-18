@@ -22,6 +22,7 @@ $(document).ready(function () {
     defaultLineWidth = 15,
     defaultLineOpacity = 1.0,
     killOpacity = 0.0,
+    resetOpacity = 1,
     localLineColor = defaultLineColor,
     localLineWidth = defaultLineWidth,
     localLineOpacity = defaultLineOpacity,
@@ -120,6 +121,7 @@ $(document).ready(function () {
     socket.on('resetCanvas', function (data) {
         ctxUpper.clearRect(0, 0, canvasLower.width, canvasLower.height);
         ctxLower.fillStyle = "white";
+        ctxLower.globalAlpha = resetOpacity;
         ctxLower.fillRect(0, 0, canvasLower.width, canvasLower.height);
     });
 
