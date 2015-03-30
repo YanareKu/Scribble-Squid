@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, session as flask_session, g, send_from_directory
 from flask.ext.socketio import SocketIO, emit, send
 import model
-# import os
+import os
 
 UPLOAD_FOLDER = 'static/img'
 
@@ -47,11 +47,12 @@ def sign_up_log_in():
 def save_image():
     img = request.files['image']
     if img:
-#        NOTE: Cant use os.path because WINDOWS doesn't agree on \ vs /
-#        fullpath = os.path.join(app.config['UPLOAD_FOLDER'], filename) 
-        fullpath = app.config['UPLOAD_FOLDER'] + "/" + g.username + ".png"
+        # mac version below
+        filename = g.username + ".png"
+        fullpath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        # Windows version below -- unsure why there is a difference between mac/windows
+        # fullpath = app.config['UPLOAD_FOLDER'] + "/" + g.username + ".png"
         img.save(fullpath)
-
         image = model.get_image_by_user_id(g.user_id)
 
         if image == None:
