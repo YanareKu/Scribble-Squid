@@ -258,54 +258,54 @@ $(document).ready(function () {
                 Sign Up and Log in
     ------------------------------------------------*/
 
-    function signUpLogIn(){
-    return '<div class="modal fade" id="signInModal">' +
-    '<div class="modal-dialog">' +
-    '<div class="modal-content">' +
-    '<div class="modal-header">' +
-    '<h3 class="modal-title">Sign Up or Log In!</h3>' +
-    '</div>' +
-    '<div class="modal-body">' + 
-    '<p>Username: <input type="text" size="30" class="loginInput" id="username"></p>' +
-    '<p>Password: <input type="password" size="60" class="loginInput" id="password"></p>' +
-    '</div>' +
-    '<div class="modal-footer">' +
-    '<input type="submit" id="submitBtn">' +
-    '</div>' + // footer
-    '</div>' + // content
-    '</div>' + // dialog
-    '<div>';
-    } 
+    // function signUpLogIn(){
+    // return '<div class="modal fade" id="signInModal">' +
+    // '<div class="modal-dialog">' +
+    // '<div class="modal-content">' +
+    // '<div class="modal-header">' +
+    // '<h3 class="modal-title">Sign Up or Log In!</h3>' +
+    // '</div>' +
+    // '<div class="modal-body">' + 
+    // '<p>Username: <input type="text" size="30" class="loginInput" id="username"></p>' +
+    // '<p>Password: <input type="password" size="60" class="loginInput" id="password"></p>' +
+    // '</div>' +
+    // '<div class="modal-footer">' +
+    // '<input type="submit" id="submitBtn">' +
+    // '</div>' + // footer
+    // '</div>' + // content
+    // '</div>' + // dialog
+    // '<div>';
+    // } 
 
-    $("body").append(signUpLogIn());
-    $('#signInModal').on('shown.bs.modal', function () {
-        $('#submitBtn').attr('disabled', 'disabled');
+    // $("body").append(signUpLogIn());
+    // $('#signInModal').on('shown.bs.modal', function () {
+    //     $('#submitBtn').attr('disabled', 'disabled');
 
-        $('input[type=text], input[type=password]').keyup(function() {      
-            if ($('#username').val() !=='' && $('#password').val() !== '') {    
-                $('#submitBtn').removeAttr('disabled');
-            } else {
-                $('#submitBtn').attr('disabled', 'disabled');
-            }
-        });
+    //     $('input[type=text], input[type=password]').keyup(function() {      
+    //         if ($('#username').val() !=='' && $('#password').val() !== '') {    
+    //             $('#submitBtn').removeAttr('disabled');
+    //         } else {
+    //             $('#submitBtn').attr('disabled', 'disabled');
+    //         }
+    //     });
 
-        $("#submitBtn").click(function (evt) {
-            users.username = $("#username").val().trim();
-            users.password = $("#password").val();
-            $.post("/", 
-                {'username': users.username,
-                'password': users.password},
-                function (result, error) { 
-                    if (result == "AWWW YIS") {
-                        $('#signInModal').modal('hide');
-                    } else if (result == "AWWW NOO") {
-                    //----- Think of solution more elegant than alert in future ----
-                    alert("Whoops! Looks like you've got the wrong username and password combination!");}
-                });
-        });
-    });
+    //     $("#submitBtn").click(function (evt) {
+    //         users.username = $("#username").val().trim();
+    //         users.password = $("#password").val();
+    //         $.post("/", 
+    //             {'username': users.username,
+    //             'password': users.password},
+    //             function (result, error) { 
+    //                 if (result == "AWWW YIS") {
+    //                     $('#signInModal').modal('hide');
+    //                 } else if (result == "AWWW NOO") {
+    //                 //----- Think of solution more elegant than alert in future ----
+    //                 alert("Whoops! Looks like you've got the wrong username and password combination!");}
+    //             });
+    //     });
+    // });
 
-    $('#signInModal').modal({backdrop: 'static', show: true});
+    // $('#signInModal').modal({backdrop: 'static', show: true});
 
     /*----------------------------------------------
                 Tool Functions
