@@ -48,10 +48,10 @@ def save_image():
     img = request.files['image']
     if img:
         # mac version below
-        filename = g.username + ".png"
-        fullpath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        # filename = g.username + ".png"
+        # fullpath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         # Windows version below -- unsure why there is a difference between mac/windows
-        # fullpath = app.config['UPLOAD_FOLDER'] + "/" + g.username + ".png"
+        fullpath = app.config['UPLOAD_FOLDER'] + "/" + g.username + ".png"
         img.save(fullpath)
         image = model.get_image_by_user_id(g.user_id)
 
