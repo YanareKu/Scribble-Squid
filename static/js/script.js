@@ -11,7 +11,7 @@ $(document).ready(function () {
     canvasLower = document.getElementById('lower'),
     ctxUpper = canvasUpper.getContext('2d'),
     ctxLower = canvasLower.getContext('2d') ? canvasLower.getContext('2d') : null,
-    url = 'http://localhost:5000',
+    url = 'https://scribblesquid.herokuapp.com/',
     socket = io.connect(url),
     id = Math.round($.now()*Math.random()),
     lastEmit = $.now(),
