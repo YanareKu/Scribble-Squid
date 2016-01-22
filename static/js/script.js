@@ -4,9 +4,6 @@ $(document).ready(function () {
                    Set Globals, Canvas, and Stroke
     -------------------------------------------------------------*/
 
-    //Later need to find way to limit the number of globals I use
-    //to optimize code
-
     var canvasUpper = document.getElementById('upper'),
     canvasLower = document.getElementById('lower'),
     ctxUpper = canvasUpper.getContext('2d'),
