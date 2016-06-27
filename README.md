@@ -3,6 +3,8 @@ Scribble Squid is a multi-user drawing application that utilizes the Websocket p
 to create a fast, asynchronous, real-time drawing environment ideal for brainstorming ideas, reviewing designs, creating mocks,
 group virtual whiteboarding, or simply having fun creating artwork with one another.  
 
+https://scribblesquid.herokuapp.com
+
 **Current Features:**
 
 - Ability to change the color, size, and opacity of brushes for clarity, stressing design aspects, or for artistic purposes.
