@@ -8,49 +8,11 @@
         <link rel="stylesheet" href="static/css/jquery-ui.theme.css">
         <link rel="stylesheet" href="static/css/jquery-ui.css">
         <link rel="stylesheet" href="static/css/styles.css">
-        <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
         <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
         <script src="static/js/jquery-ui.js"></script>
         <script src="static/js/script.js"></script>
-        <script>
-        $(function() {
-            $("#colorBox").draggable();
-         });
-
-        $(function() {
-            $("#sliders").draggable();
-         });
-
-        $(function() {
-            $("#colorBox").resizable(function() {
-                $(this).children('.colorPrev').css({
-                    height: $(this).height()
-                });
-            });
-        });
-
-         $(function() {
-            $("#sliders" ).resizable({
-              maxHeight: 119,
-              maxWidth: 323,
-              minHeight: 110,
-              minWidth: 249
-            });
-          });
-
-        $(function() {
-            $("#sliders").resizable(function() {
-                $(this).children('#sliderbox').css({
-                    height: $(this).height()
-                });
-            });
-        });
-
-        $(function() {
-            $("#buttons").buttonset();
-        });
-        </script>
         
     </head>
     <body>

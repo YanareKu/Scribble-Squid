@@ -1,4 +1,45 @@
+const init = () => {
+    $(function() {
+        $("#colorBox").draggable();
+     });
+
+    $(function() {
+        $("#sliders").draggable();
+     });
+
+    $(function() {
+        $("#colorBox").resizable(function() {
+            $(this).children('.colorPrev').css({
+                height: $(this).height()
+            });
+        });
+    });
+
+     $(function() {
+        $("#sliders" ).resizable({
+          maxHeight: 119,
+          maxWidth: 323,
+          minHeight: 110,
+          minWidth: 249
+        });
+      });
+
+    $(function() {
+        $("#sliders").resizable(function() {
+            $(this).children('#sliderbox').css({
+                height: $(this).height()
+            });
+        });
+    });
+
+    $(function() {
+        $("#buttons").buttonset();
+    });
+}
+
+
 $(document).ready(function () {
+    init();
 
     /*-----------------------------------------------------------
                    Set Globals, Canvas, and Stroke
@@ -7,12 +48,15 @@ $(document).ready(function () {
     //Later need to find way to limit the number of globals I use
     //to optimize code
 
-    var canvasUpper = document.getElementById('upper'),
+    let canvasUpper = document.getElementById('upper'),
     canvasLower = document.getElementById('lower'),
     ctxUpper = canvasUpper.getContext('2d'),
     ctxLower = canvasLower.getContext('2d') ? canvasLower.getContext('2d') : null,
-    url = 'https://scribblesquid.herokuapp.com/',
-    socket = io.connect(url),
+
+    // url = 'https://scribblesquid.herokuapp.com/',
+    // socket = io.connect(url),
+    socket = io.connect('http://' + document.domain + ':' + location.port),
+
     id = Math.round($.now()*Math.random()),
     lastEmit = $.now(),
     paint = false,
@@ -119,6 +163,7 @@ $(document).ready(function () {
     });
 
     socket.on('resetCanvas', function (data) {
+        console.log("Am I happening?");
         ctxUpper.clearRect(0, 0, canvasLower.width, canvasLower.height);
         ctxLower.fillStyle = "white";
         ctxLower.globalAlpha = resetOpacity;

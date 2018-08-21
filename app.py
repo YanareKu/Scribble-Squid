@@ -13,6 +13,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = 'TROLOLOLOLOLO!'
 socketio = SocketIO(app)
 
+# def eprint(*args, **kwargs):
+#     print(*args, file=sys.stderr, **kwargs)
+
 @app.before_request
 def global_variables():
     if "user" in flask_session:
@@ -62,6 +65,15 @@ def save_image():
             return 'OK' 
     return "Failure"
 
+# Offers the load() javascript function the path it needs
+@app.route('/static/img/<path:path>')
+def send_user_image(path):
+    return send_from_directory('static/img', path)
+
+#----------------------------
+#      Broadcast Events
+#----------------------------
+
 @socketio.on('broadcastImage')
 def broadcast_image(data):
     emit('loadImage', data, broadcast=True)
@@ -69,11 +81,6 @@ def broadcast_image(data):
 @socketio.on('reset')
 def reset(data):
     emit('resetCanvas', data, broadcast=True)
-
-# Offers the load() javascript function the path it needs
-@app.route('/static/img/<path:path>')
-def send_user_image(path):
-    return send_from_directory('static/img', path)
     
 @socketio.on('connection')
 def listen_send_all(data):
