@@ -55,7 +55,7 @@ $(document).ready(function () {
 
     // url = 'https://scribblesquid.herokuapp.com/',
     // socket = io.connect(url),
-    socket = io.connect('http://' + document.domain + ':' + location.port),
+    socket = io('http://' + document.domain + ':' + location.port),
 
     id = Math.round($.now()*Math.random()),
     lastEmit = $.now(),
@@ -163,7 +163,6 @@ $(document).ready(function () {
     });
 
     socket.on('resetCanvas', function (data) {
-        console.log("Am I happening?");
         ctxUpper.clearRect(0, 0, canvasLower.width, canvasLower.height);
         ctxLower.fillStyle = "white";
         ctxLower.globalAlpha = resetOpacity;
