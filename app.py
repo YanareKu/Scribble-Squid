@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, session as flask_session, g, send_from_directory
-from flask.ext.socketio import SocketIO, emit, send
+from flask_socketio import SocketIO, emit, send
 import model
 import os
 
